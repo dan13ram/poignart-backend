@@ -12,7 +12,9 @@ export const verifyToken = (req: Request): boolean => {
   }
 
   try {
-    verify(token, CONFIG.JWT_SECRET);
+    verify(token, CONFIG.JWT_SECRET, {
+      maxAge: CONFIG.JWT_EXPIRATION_TIME
+    });
     return true;
   } catch (err) {
     return false;
