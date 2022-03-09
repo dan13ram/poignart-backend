@@ -6,19 +6,19 @@ interface TokenDocument extends TokenInterface, Document {}
 
 const TokenSchema = new Schema<TokenDocument>(
   {
-    token_id: {
+    tokenID: {
       type: Number,
       required: true
     },
-    token_uri: {
+    tokenURI: {
       type: String,
       required: true
     },
-    min_price: {
+    minPrice: {
       type: String,
       required: true
     },
-    created_by: {
+    createdBy: {
       type: Schema.Types.ObjectId,
       ref: 'Artist',
       required: true
@@ -27,11 +27,11 @@ const TokenSchema = new Schema<TokenDocument>(
       type: String,
       required: true
     },
-    minter_address: {
+    minterAddress: {
       type: String,
       required: false
     },
-    minted_at: {
+    mintedAt: {
       type: Date,
       required: false
     }

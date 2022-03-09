@@ -4,26 +4,26 @@ export const typeDefs = gql`
   type Artist {
     _id: ID!
     name: String
-    email_address: String!
-    discord_handle: String!
-    telegram_handle: String
-    github_handle: String
-    eth_address: String!
-    ens_name: String
-    created_nfts: [Token!]
+    emailAddress: String!
+    discordHandle: String!
+    telegramHandle: String
+    githubHandle: String
+    ethAddress: String!
+    ensName: String
+    createdNFTs: [Token!]
     createdAt: String!
     updatedAt: String!
   }
 
   type Token {
     _id: ID!
-    token_id: Int!
-    token_uri: String!
-    min_price: String!
-    created_by: Artist!
+    tokenID: Int!
+    tokenURI: String!
+    minPrice: String!
+    createdBy: Artist!
     signature: String!
-    minter_address: String
-    minted_at: String
+    minterAddress: String
+    mintedAt: String
     createdAt: String!
     updatedAt: String!
   }
@@ -38,11 +38,11 @@ export const typeDefs = gql`
 
   input ArtistFilter {
     _id: String
-    eth_address: String
+    ethAddress: String
   }
 
   input TokenFilter {
     _id: String
-    token_id: Int
+    tokenID: Int
   }
 `;

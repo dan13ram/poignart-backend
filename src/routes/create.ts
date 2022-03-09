@@ -6,6 +6,7 @@ const ROUTES = express.Router();
 
 ROUTES.post('/artist', async (req: Request, res: Response) => {
   try {
+    console.log({ requestBody: req.body });
     const response = await createArtist(req.body);
     res.status(201).json(response);
   } catch (err) {

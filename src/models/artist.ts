@@ -10,35 +10,35 @@ const ArtistSchema = new Schema<ArtistDocument>(
       type: String,
       required: true
     },
-    email_address: {
+    emailAddress: {
       type: String,
       required: true
     },
-    discord_handle: {
+    discordHandle: {
       type: String,
       required: true
     },
-    telegram_handle: {
+    telegramHandle: {
       type: String,
       required: false
     },
-    twitter_handle: {
+    twitterHandle: {
       type: String,
       required: false
     },
-    github_handle: {
+    githubHandle: {
       type: String,
       required: false
     },
-    eth_address: {
+    ethAddress: {
       type: String,
       required: true
     },
-    ens_name: {
+    ensName: {
       type: String,
       required: false
     },
-    created_nfts: {
+    createdNFTs: {
       type: [Schema.Types.ObjectId],
       ref: 'Token',
       required: true
