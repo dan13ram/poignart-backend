@@ -1,7 +1,15 @@
-FROM node:16
+FROM node:16 as base
+WORKDIR /usr/src/app
 
-WORKDIR /
+COPY yarn.lock .
+COPY tsconfig.json .
 COPY package.json .
-RUN npm install
-COPY . .
-CMD npm start
+COPY src ./src
+
+ENV MONGODB_URI $MONGODB_URI
+ENV JWT_SECRET $JWT_SECRET
+ENV PORT $PORT
+
+RUN yarn install --frozen-lockfile
+
+CMD ["yarn", "start"]

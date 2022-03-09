@@ -4,7 +4,7 @@ import { createArtist } from '../controllers/artist';
 import { createToken } from '../controllers/token';
 import { uploadToPinataAndCallContract } from '../utils/pinata';
 
-const upload = multer({ dest: 'contracts/uploads/' });
+const upload = multer({ dest: 'data/uploads/' });
 
 const ROUTES = express.Router();
 
