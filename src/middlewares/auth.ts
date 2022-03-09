@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { verify } from 'jsonwebtoken';
+import { verify, sign } from 'jsonwebtoken';
 
 import { CONFIG } from '../config';
 
@@ -12,9 +12,7 @@ export const verifyToken = (req: Request): boolean => {
   }
 
   try {
-    verify(token, CONFIG.JWT_SECRET, {
-      maxAge: CONFIG.JWT_EXPIRATION_TIME
-    });
+    verify(token, CONFIG.JWT_SECRET);
     return true;
   } catch (err) {
     return false;

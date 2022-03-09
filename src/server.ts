@@ -2,7 +2,12 @@ import express, { Request, Response, Application } from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import cors from 'cors';
 
-import ROUTER from './routes/routes';
+import {
+  ApolloServerPluginLandingPageGraphQLPlayground,
+  ApolloServerPluginLandingPageProductionDefault
+} from 'apollo-server-core';
+import CREATE_ROUTER from './routes/create';
+import UPDATE_ROUTER from './routes/update';
 
 import { typeDefs } from './schema/typedefs';
 import { resolvers } from './schema/resolvers';
@@ -19,7 +24,12 @@ const createServer = async (): Promise<Application> => {
     resolvers,
     context: ({ req }) => {
       if (!verifyToken(req)) throw Error('Unauthorized');
-    }
+    },
+    plugins: [
+      process.env.NODE_ENV === 'production'
+        ? ApolloServerPluginLandingPageProductionDefault({ footer: false })
+        : ApolloServerPluginLandingPageGraphQLPlayground()
+    ]
   });
 
   await server.start();
@@ -27,7 +37,9 @@ const createServer = async (): Promise<Application> => {
   server.applyMiddleware({ app });
 
   // ---------- CREATE ROUTES ----------
-  app.use('/create', validateRequest, ROUTER);
+  app.use('/create', validateRequest, CREATE_ROUTER);
+
+  app.use('/update', validateRequest, UPDATE_ROUTER);
 
   // ---------- ROOT REQUEST ----------
   app.get('/', (_req: Request, res: Response) =>
