@@ -1,4 +1,5 @@
 import mongoose, { ConnectOptions } from 'mongoose';
+import { Application } from 'express';
 import createServer from './server';
 
 import { CONFIG } from './config';
@@ -9,9 +10,9 @@ mongoose
     useUnifiedTopology: true
   } as ConnectOptions)
   .then(() => {
-    const app = createServer();
-    app.listen(CONFIG.PORT, () =>
-      console.log(`Listening on port ${CONFIG.PORT}`)
-    );
-  })
-  .catch((err: any) => console.log(err));
+    createServer().then((app: Application) => {
+      app.listen(CONFIG.PORT, () =>
+        console.log(`Listening on port ${CONFIG.PORT}`)
+      );
+    });
+  });

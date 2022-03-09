@@ -8,7 +8,7 @@ import { typeDefs } from './schema/typedefs';
 import { resolvers } from './schema/resolvers';
 import { verifyToken, validateRequest } from './middlewares/auth';
 
-const createServer = (): Application => {
+const createServer = async (): Promise<Application> => {
   const app = express();
 
   app.use(cors());
@@ -21,6 +21,8 @@ const createServer = (): Application => {
       if (!verifyToken(req)) throw Error('Unauthorized');
     }
   });
+
+  await server.start();
 
   server.applyMiddleware({ app });
 
