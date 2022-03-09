@@ -30,7 +30,9 @@ const createServer = async (): Promise<Application> => {
   app.use('/create', validateRequest, ROUTER);
 
   // ---------- ROOT REQUEST ----------
-  app.get('/', (_req: Request, res: Response) => res.json('Puck Futin!'));
+  app.get('/', (_req: Request, res: Response) =>
+    res.json('Freedom is under attack. Creators are fighting back!')
+  );
 
   return app;
 };
