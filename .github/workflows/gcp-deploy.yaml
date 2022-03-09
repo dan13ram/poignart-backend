@@ -1,0 +1,50 @@
+name: Deploy to Cloud Run
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  deploy:
+    name: Deploy to Cloud Run
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{github.token}}
+
+      - uses: actions/checkout@v3
+
+      - uses: mr-smithers-excellent/docker-build-push@v5
+        name: Build & push Docker image
+        with:
+          image: poignart-backend/server/dev-image
+          registry: asia-docker.pkg.dev
+          addLatest: true
+          username: _json_key
+          password: ${{ secrets.GCP_CREDENTIALS }}
+
+      - id: auth
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v0
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud -q run deploy poignart-backend \
+            --image asia-docker.pkg.dev/poignart-backend/server/dev-image:latest \
+            --region asia-east1 \
+            --port 5000 \
+            --cpu 1 \
+            --memory 512Mi \
+            --ingress all \
+            --allow-unauthenticated \
+            --max-instances 1 \
+            --set-env-vars "MONGODB_URI=${{ secrets.MONGODB_URI }}" \
+            --set-env-vars "JWT_SECRET=${{ secrets.JWT_SECRET }}"

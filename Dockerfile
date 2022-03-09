@@ -8,8 +8,7 @@ COPY src ./src
 
 ENV MONGODB_URI $MONGODB_URI
 ENV JWT_SECRET $JWT_SECRET
-ENV PORT $PORT
 
 RUN yarn install --frozen-lockfile
 
-CMD ["yarn", "start"]
+CMD ["node", "dist/index.js"]
