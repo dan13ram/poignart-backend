@@ -9,6 +9,7 @@
     "lint": "eslint --ignore-path .gitignore .",
     "format": "prettier --ignore-path .gitignore --write \"{*,**/*}.{ts,tsx,js,jsx,json,yml,yaml,md}\"",
     "typecheck": "tsc",
+    "postinstall": "yarn build",
     "prepare": "husky install"
   },
   "lint-staged": {
