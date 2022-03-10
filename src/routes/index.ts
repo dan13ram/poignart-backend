@@ -10,9 +10,10 @@ ROUTES.get('/verify/:address', async (req: Request, res: Response) => {
   try {
     const { address } = req.params;
     if (!utils.isAddress(address)) {
-      res
-        .status(400)
-        .json({ error: 'Request body must contain a valid "address"' });
+      res.status(400).json({
+        error:
+          'Request must contain a valid "ethAddress" in /verify/:ethAddress'
+      });
       return;
     }
     const snapshot = await getSnapshot();
