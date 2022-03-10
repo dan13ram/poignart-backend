@@ -1,14 +1,60 @@
-import YourContract from './YourContract.json';
+import { ethers } from 'ethers';
+import { CONFIG } from '../config';
 
-// TODO fetching whitelisted addresses from snapshot
-export const clientAddress = '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266';
-export const whitelistAddresses = [clientAddress];
+export const ensureValidCronWallet = async (): Promise<void> => {
+  const balance = await CONFIG.CRON_WALLET.getBalance();
+  if (balance.lte(0)) {
+    throw new Error('CRON_PRIVATE_KEY must have non-zero balance');
+  }
 
-// TODO move to env. This is very unsafe
-export const privateKey =
-  '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
+  const abi = new ethers.utils.Interface([
+    'function CRON_JOB() public view returns (bytes32)',
+    'function hasRole(bytes32 role, address account) public view returns (bool)'
+  ]);
 
-// TODO fetch address from env
-export const contractAddress = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
+  const contract = new ethers.Contract(
+    CONFIG.POIGNART_CONTRACT,
+    abi,
+    CONFIG.CRON_WALLET
+  );
 
-export const { abi } = YourContract;
+  const { address } = CONFIG.CRON_WALLET;
+  const role = await contract.CRON_JOB();
+
+  const hasRole = await contract.hasRole(role, address);
+
+  if (!hasRole) {
+    throw new Error('CRON_PRIVATE_KEY must have CRON_JOB role');
+  }
+};
+
+export const getMerkleRoot = async (): Promise<string> => {
+  const abi = new ethers.utils.Interface([
+    'function _merkleRoot() public view returns (bytes32)'
+  ]);
+
+  const contract = new ethers.Contract(
+    CONFIG.POIGNART_CONTRACT,
+    abi,
+    CONFIG.CRON_WALLET
+  );
+
+  // eslint-disable-next-line no-underscore-dangle
+  return contract._merkleRoot();
+};
+
+export const updateMerkleRoot = async (
+  root: string
+): Promise<ethers.providers.TransactionResponse> => {
+  const abi = new ethers.utils.Interface([
+    'function cronJobRoot(bytes32 newRoot) external'
+  ]);
+
+  const contract = new ethers.Contract(
+    CONFIG.POIGNART_CONTRACT,
+    abi,
+    CONFIG.CRON_WALLET
+  );
+
+  return contract.cronJobRoot(root);
+};

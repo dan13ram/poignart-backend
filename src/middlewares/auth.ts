@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { verify, sign } from 'jsonwebtoken';
+import { verify } from 'jsonwebtoken';
 
 import { CONFIG } from '../config';
 
