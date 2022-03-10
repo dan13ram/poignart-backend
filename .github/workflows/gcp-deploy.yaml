@@ -48,4 +48,7 @@ jobs:
             --max-instances 1 \
             --set-env-vars "NODE_ENV=production" \
             --set-env-vars "MONGODB_URI=${{ secrets.MONGODB_URI }}" \
+            --set-env-vars "RPC_URL=${{ secrets.RPC_URL }}" \
+            --set-env-vars "CRON_PRIVATE_KEY=${{ secrets.CRON_PRIVATE_KEY }}" \
+            --set-env-vars "POIGNART_CONTRACT=${{ secrets.POIGNART_CONTRACT }}" \
             --set-env-vars "JWT_SECRET=${{ secrets.JWT_SECRET }}"
