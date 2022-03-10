@@ -63,7 +63,7 @@ export const getSnapshot = async (rebuild = false): Promise<Snapshot> => {
   const data = await fs.readFile(whitelistFile);
 
   // TODO fetch this from mongodb and add api to add to it
-  const additionalAddresses = ['0xc9f2d9adfa6c24ce0d5a999f2ba3c6b06e36f75e'];
+  const additionalAddresses = ['0xc9f2d9adfa6c24ce0d5a999f2ba3c6b06e36f75e', '0x9aE7B89BCeBe350CbBCdb7dD66e89c7d3629d641'];
 
   const addresses = data
     .toString()
