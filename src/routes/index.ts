@@ -6,19 +6,19 @@ import { getSnapshot } from '../utils/snapshot';
 
 const ROUTES = express.Router();
 
-ROUTES.get('/verify', async (req: Request, res: Response) => {
+ROUTES.get('/verify/:address', async (req: Request, res: Response) => {
   try {
-    const { ethAddress } = req.body;
-    if (!utils.isAddress(ethAddress)) {
+    const { address } = req.params;
+    if (!utils.isAddress(address)) {
       res
         .status(400)
-        .json({ error: 'Request body must contain a valid "ethAddress"' });
+        .json({ error: 'Request body must contain a valid "address"' });
       return;
     }
     const snapshot = await getSnapshot();
-    const proof = snapshot.getMerkleProof(ethAddress);
-    const verified = snapshot.verifyAddress(ethAddress, proof);
-    res.status(200).json({ response: { verified, proof, ethAddress } });
+    const proof = snapshot.getMerkleProof(address);
+    const verified = snapshot.verifyAddress(address, proof);
+    res.status(200).json({ response: { verified, proof, address } });
   } catch (err) {
     res.status(500).json(err);
   }
