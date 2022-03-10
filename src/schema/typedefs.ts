@@ -3,12 +3,14 @@ import { gql } from 'apollo-server-express';
 export const typeDefs = gql`
   type Artist {
     _id: ID!
-    name: String
-    emailAddress: String!
+    name: String!
+    bio: String!
+    ethAddress: String!
     discordHandle: String!
     telegramHandle: String
-    githubHandle: String
-    ethAddress: String!
+    twitterHandle: String
+    instagramHandle: String
+    emailAddress: String
     ensName: String
     createdNFTs: [Token!]
     createdAt: String!
@@ -22,8 +24,6 @@ export const typeDefs = gql`
     minPrice: String!
     createdBy: Artist!
     signature: String!
-    minterAddress: String
-    mintedAt: String
     createdAt: String!
     updatedAt: String!
   }

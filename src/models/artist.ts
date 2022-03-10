@@ -10,7 +10,11 @@ const ArtistSchema = new Schema<ArtistDocument>(
       type: String,
       required: true
     },
-    emailAddress: {
+    bio: {
+      type: String,
+      required: true
+    },
+    ethAddress: {
       type: String,
       required: true
     },
@@ -26,13 +30,13 @@ const ArtistSchema = new Schema<ArtistDocument>(
       type: String,
       required: false
     },
-    githubHandle: {
+    instagramHandle: {
       type: String,
       required: false
     },
-    ethAddress: {
+    emailAddress: {
       type: String,
-      required: true
+      required: false
     },
     ensName: {
       type: String,

@@ -26,14 +26,6 @@ const TokenSchema = new Schema<TokenDocument>(
     signature: {
       type: String,
       required: true
-    },
-    minterAddress: {
-      type: String,
-      required: false
-    },
-    mintedAt: {
-      type: Date,
-      required: false
     }
   },
   { timestamps: true }
