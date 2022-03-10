@@ -22,6 +22,9 @@ services:
       PORT: 5000
       MONGODB_URI: ${MONGODB_URI}
       JWT_SECRET: ${JWT_SECRET}
+      CRON_PRIVATE_KEY: ${CRON_PRIVATE_KEY}
+      POIGNART_CONTRACT: ${POIGNART_CONTRACT}
+      RPC_URL: ${RPC_URL}
 
 volumes:
   mongodb_data_container:
