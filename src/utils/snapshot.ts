@@ -56,7 +56,10 @@ class Snapshot {
 
 const whitelistFile = path.join(__dirname, 'whitelist.txt');
 
-export const getSnapshot = async (): Promise<Snapshot> => {
+let snapshot: Snapshot;
+
+export const getSnapshot = async (rebuild = false): Promise<Snapshot> => {
+  if (snapshot && !rebuild) return snapshot;
   const data = await fs.readFile(whitelistFile);
 
   // TODO fetch this from mongodb and add api to add to it
@@ -67,5 +70,8 @@ export const getSnapshot = async (): Promise<Snapshot> => {
     .split('\n')
     .concat(...additionalAddresses)
     .filter(a => !!a);
-  return new Snapshot(addresses);
+
+  snapshot = new Snapshot(addresses);
+
+  return snapshot;
 };

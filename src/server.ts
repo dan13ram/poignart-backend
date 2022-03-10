@@ -6,6 +6,7 @@ import {
   ApolloServerPluginLandingPageGraphQLPlayground,
   ApolloServerPluginLandingPageProductionDefault
 } from 'apollo-server-core';
+import morgan from 'morgan';
 import { ROUTES } from './routes';
 
 import { typeDefs } from './schema/typedefs';
@@ -34,6 +35,8 @@ const createServer = async (): Promise<Application> => {
   await server.start();
 
   server.applyMiddleware({ app });
+
+  app.use(morgan('tiny'));
 
   app.use('/api', validateRequest, ROUTES);
 

@@ -2,7 +2,6 @@ import { utils } from 'ethers';
 import express, { Request, Response } from 'express';
 import { createArtist } from '../controllers/artist';
 import { createToken } from '../controllers/token';
-import { isVettedAddress } from '../utils/contract';
 import { getSnapshot } from '../utils/snapshot';
 
 const ROUTES = express.Router();
@@ -16,13 +15,10 @@ ROUTES.get('/verify', async (req: Request, res: Response) => {
         .json({ error: 'Request body must contain a valid "ethAddress"' });
       return;
     }
-    const [snapshot, vetted] = await Promise.all([
-      getSnapshot(),
-      isVettedAddress(ethAddress)
-    ]);
+    const snapshot = await getSnapshot();
     const proof = snapshot.getMerkleProof(ethAddress);
     const verified = snapshot.verifyAddress(ethAddress, proof);
-    res.status(200).json({ response: { verified, vetted, proof, ethAddress } });
+    res.status(200).json({ response: { verified, proof, ethAddress } });
   } catch (err) {
     res.status(500).json(err);
   }

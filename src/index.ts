@@ -14,10 +14,11 @@ mongoose
   .then(() => {
     createServer().then((app: Application) => {
       ensureValidCronWallet().then(() => {
-        scheduleCrons();
-        app.listen(CONFIG.PORT, () =>
-          console.log(`Listening on port ${CONFIG.PORT}`)
-        );
+        scheduleCrons().then(() => {
+          app.listen(CONFIG.PORT, () =>
+            console.log(`Listening on port ${CONFIG.PORT}`)
+          );
+        });
       });
     });
   });

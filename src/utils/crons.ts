@@ -3,7 +3,7 @@ import { getMerkleRoot, updateMerkleRoot } from './contract';
 import { getSnapshot } from './snapshot';
 
 const computeMerkleRoot = async (): Promise<string> => {
-  const snapshot = await getSnapshot();
+  const snapshot = await getSnapshot(true);
   return snapshot.getMerkleRoot();
 };
 
@@ -28,7 +28,7 @@ const merkleRootCron = async () => {
   }
 };
 
-export const scheduleCrons = () => {
-  merkleRootCron();
+export const scheduleCrons = async () => {
+  await merkleRootCron();
   cron.schedule('0 0 * * *', merkleRootCron);
 };

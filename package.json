@@ -27,6 +27,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/morgan": "^1.9.3",
     "apollo-server-core": "^3.6.3",
     "apollo-server-express": "^3.6.3",
     "copyfiles": "^2.4.1",
@@ -42,6 +43,7 @@
     "lint-staged": "^12.3.5",
     "merkletreejs": "^0.2.31",
     "mongoose": "^6.2.5",
+    "morgan": "^1.10.0",
     "node-cron": "^3.0.0",
     "path": "^0.12.7",
     "rimraf": "^3.0.2"
