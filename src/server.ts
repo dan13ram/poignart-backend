@@ -6,8 +6,7 @@ import {
   ApolloServerPluginLandingPageGraphQLPlayground,
   ApolloServerPluginLandingPageProductionDefault
 } from 'apollo-server-core';
-import CREATE_ROUTER from './routes/create';
-import UPDATE_ROUTER from './routes/update';
+import { ROUTES } from './routes';
 
 import { typeDefs } from './schema/typedefs';
 import { resolvers } from './schema/resolvers';
@@ -36,10 +35,7 @@ const createServer = async (): Promise<Application> => {
 
   server.applyMiddleware({ app });
 
-  // ---------- CREATE ROUTES ----------
-  app.use('/create', validateRequest, CREATE_ROUTER);
-
-  app.use('/update', validateRequest, UPDATE_ROUTER);
+  app.use('/api', validateRequest, ROUTES);
 
   // ---------- ROOT REQUEST ----------
   app.get('/', (_req: Request, res: Response) =>

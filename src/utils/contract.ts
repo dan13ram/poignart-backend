@@ -28,6 +28,23 @@ export const ensureValidCronWallet = async (): Promise<void> => {
   }
 };
 
+export const isVettedAddress = async (address: string): Promise<boolean> => {
+  const abi = new ethers.utils.Interface([
+    'function MINTER_ROLE() public view returns (bytes32)',
+    'function hasRole(bytes32 role, address account) public view returns (bool)'
+  ]);
+
+  const contract = new ethers.Contract(
+    CONFIG.POIGNART_CONTRACT,
+    abi,
+    CONFIG.CRON_WALLET
+  );
+
+  const role = await contract.MINTER_ROLE();
+
+  return contract.hasRole(role, address);
+};
+
 export const getMerkleRoot = async (): Promise<string> => {
   const abi = new ethers.utils.Interface([
     'function _merkleRoot() public view returns (bytes32)'
