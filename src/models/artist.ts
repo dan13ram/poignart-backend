@@ -1,6 +1,5 @@
-import { Document, Schema, model } from 'mongoose';
-
-import { ArtistInterface } from '../utils/types';
+import { Document, model, Schema } from 'mongoose';
+import { ArtistInterface } from 'utils/types';
 
 interface ArtistDocument extends ArtistInterface, Document {}
 

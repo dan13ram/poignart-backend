@@ -1,6 +1,6 @@
 import cron from 'node-cron';
-import { getMerkleRoot, updateMerkleRoot } from './contract';
-import { getSnapshot } from './snapshot';
+import { getMerkleRoot, updateMerkleRoot } from 'utils/contract';
+import { getSnapshot } from 'utils/snapshot';
 
 const computeMerkleRoot = async (): Promise<string> => {
   const snapshot = await getSnapshot(true);

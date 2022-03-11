@@ -1,19 +1,17 @@
-import express, { Request, Response, Application } from 'express';
-import { ApolloServer } from 'apollo-server-express';
-import cors from 'cors';
-
 import {
   ApolloServerPluginLandingPageGraphQLPlayground,
   ApolloServerPluginLandingPageProductionDefault
 } from 'apollo-server-core';
+import { ApolloServer } from 'apollo-server-express';
+import cors from 'cors';
+import express, { Application, Request, Response } from 'express';
+import { validateRequest, verifyToken } from 'middlewares/auth';
 import morgan from 'morgan';
-import { ROUTES } from './routes';
+import { ROUTES } from 'routes';
+import { resolvers } from 'schema/resolvers';
+import { typeDefs } from 'schema/typedefs';
 
-import { typeDefs } from './schema/typedefs';
-import { resolvers } from './schema/resolvers';
-import { verifyToken, validateRequest } from './middlewares/auth';
-
-const createServer = async (): Promise<Application> => {
+export const createServer = async (): Promise<Application> => {
   const app = express();
 
   app.use(cors());
@@ -47,5 +45,3 @@ const createServer = async (): Promise<Application> => {
 
   return app;
 };
-
-export default createServer;

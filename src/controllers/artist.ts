@@ -1,6 +1,5 @@
-import { Artist } from '../models/artist';
-
-import { ArtistInterface } from '../utils/types';
+import { Artist } from 'models/artist';
+import { ArtistInterface } from 'utils/types';
 
 export const createArtist = async (
   record: ArtistInterface

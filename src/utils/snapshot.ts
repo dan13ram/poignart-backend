@@ -1,8 +1,8 @@
-import keccak256 from 'keccak256';
-import { promises as fs } from 'fs';
-import path from 'path';
-import MerkleTree from 'merkletreejs';
 import { getAddress, solidityKeccak256 } from 'ethers/lib/utils';
+import { promises as fs } from 'fs';
+import keccak256 from 'keccak256';
+import MerkleTree from 'merkletreejs';
+import path from 'path';
 
 const unique = (a: Array<string>): Array<string> => {
   const seen: Record<string, boolean> = {};

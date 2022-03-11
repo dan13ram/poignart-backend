@@ -1,8 +1,7 @@
+import { CONFIG } from 'config';
 import { utils } from 'ethers';
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { verify } from 'jsonwebtoken';
-
-import { CONFIG } from '../config';
 
 type PoignartRequest = Request & { signer: string };
 

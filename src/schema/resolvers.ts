@@ -1,10 +1,9 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import { Artist } from '../models/artist';
-import { Voucher } from '../models/voucher';
-
-import { ArtistInterface, VoucherInterface } from '../utils/types';
+import { Artist } from 'models/artist';
+import { Voucher } from 'models/voucher';
+import { ArtistInterface, VoucherInterface } from 'utils/types';
 
 export const resolvers = {
   Query: {

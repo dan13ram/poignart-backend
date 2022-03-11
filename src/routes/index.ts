@@ -1,9 +1,9 @@
+import { createArtist } from 'controllers/artist';
+import { createVoucher, getNextTokenID } from 'controllers/voucher';
 import { utils } from 'ethers';
 import express, { Request, Response } from 'express';
-import { createArtist } from '../controllers/artist';
-import { createVoucher, getNextTokenID } from '../controllers/voucher';
-import { getSnapshot } from '../utils/snapshot';
-import { Artist } from '../models/artist';
+import { Artist } from 'models/artist';
+import { getSnapshot } from 'utils/snapshot';
 
 const ROUTES = express.Router();
 

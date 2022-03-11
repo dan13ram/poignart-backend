@@ -8,6 +8,7 @@
     "airbnb-base",
     "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended",
+    "plugin:import/recommended",
     "plugin:import/errors",
     "plugin:import/warnings",
     "plugin:import/typescript"
@@ -17,20 +18,38 @@
     "ecmaVersion": 12,
     "sourceType": "module"
   },
-  "plugins": ["@typescript-eslint", "prettier", "import"],
+  "plugins": ["@typescript-eslint", "simple-import-sort", "prettier", "import"],
   "rules": {
     "linebreak-style": "off",
     "import/extensions": "off",
     "import/no-unresolved": "error",
-    "no-console": "off",
-    "@typescript-eslint/no-explicit-any": "off",
-    "camelcase": "off",
+    "import/no-default-export": "error",
+    "import/no-relative-packages": "error",
     "import/prefer-default-export": "off",
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [".*"]
+      }
+    ],
+    "no-console": "off",
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-unused-vars": "error",
+    "@typescript-eslint/no-unused-expressions": "warn",
     "prettier/prettier": [
       "error",
       {
         "endOfLine": "auto"
       }
     ]
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "paths": ["src"]
+      }
+    }
   }
 }

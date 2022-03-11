@@ -1,6 +1,5 @@
-import { Voucher } from '../models/voucher';
-
-import { VoucherInterface } from '../utils/types';
+import { Voucher } from 'models/voucher';
+import { VoucherInterface } from 'utils/types';
 
 export const createVoucher = async (
   record: VoucherInterface
