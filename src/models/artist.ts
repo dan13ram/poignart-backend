@@ -41,7 +41,7 @@ const ArtistSchema = new Schema<ArtistDocument>(
     },
     createdNFTs: {
       type: [Schema.Types.ObjectId],
-      ref: 'Token',
+      ref: 'Artist',
       required: true
     }
   },

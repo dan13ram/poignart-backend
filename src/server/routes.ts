@@ -1,24 +1,20 @@
 import { createArtist } from 'controllers/artist';
 import { createVoucher, getNextTokenID } from 'controllers/voucher';
-import { utils } from 'ethers';
 import express, { Request, Response } from 'express';
+import { AuthRequest } from 'middlewares/auth';
 import { Artist } from 'models/artist';
 import { getSnapshot } from 'utils/snapshot';
 
 const ROUTES = express.Router();
 
-ROUTES.get('/verify/:address', async (req: Request, res: Response) => {
+ROUTES.get('/verify', async (req: Request, res: Response) => {
   try {
-    const { address } = req.params;
-    if (!utils.isAddress(address)) {
-      res.status(400).json({
-        error: 'Request must contain a valid "address" in /verify/:address'
-      });
-      return;
-    }
+    const address = (req as AuthRequest).signer;
     const [snapshot, artist, nextTokenID] = await Promise.all([
       getSnapshot(),
-      Artist.findOne({ ethAddress: address }).populate('createdNFTs'),
+      Artist.findOne({
+        ethAddress: address
+      }).populate('createdNFTs'),
       getNextTokenID()
     ]);
     const proof = snapshot.getMerkleProof(address);
@@ -28,7 +24,8 @@ ROUTES.get('/verify/:address', async (req: Request, res: Response) => {
       .status(200)
       .json({ response: { verified, proof, artist, nextTokenID } });
   } catch (err) {
-    res.status(500).json(err);
+    console.error('Error verifying artist:', (err as Error)?.message ?? err);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 

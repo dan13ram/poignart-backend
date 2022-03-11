@@ -3,7 +3,9 @@ import { NextFunction, Request, Response } from 'express';
 import { verify } from 'jsonwebtoken';
 import { CONFIG } from 'utils/config';
 
-type PoignartRequest = Request & { signer: string };
+export interface AuthRequest extends Request {
+  signer: string;
+}
 
 export const verifyToken = (req: Request): null | string => {
   const { authorization } = req.headers;
@@ -19,7 +21,7 @@ export const verifyToken = (req: Request): null | string => {
       'Welcome to PoignART!',
       signature.toString()
     );
-    return address;
+    return address.toLowerCase();
   } catch (error) {
     console.error('error verify token:', error);
     return null;
@@ -30,12 +32,12 @@ export const validateRequest = (
   req: Request,
   res: Response,
   next: NextFunction
-): any => {
+): void => {
   const signer = verifyToken(req);
   if (!signer) {
     res.status(401).json({ error: 'Unauthorized' });
   } else {
-    (req as PoignartRequest).signer = signer;
+    (req as AuthRequest).signer = signer;
     next();
   }
 };
