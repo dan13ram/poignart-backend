@@ -16,31 +16,35 @@ const ArtistSchema = new Schema<ArtistDocument>(
     },
     ethAddress: {
       type: String,
-      required: true
+      required: true,
+      unique: true,
+      index: true
     },
     discordHandle: {
       type: String,
-      required: true
+      required: true,
+      unique: true,
+      match: /^((?!(discordtag|everyone|here)#)((?!@|#|:|```).{2,32})#\d{4})/
     },
     telegramHandle: {
       type: String,
-      required: false
+      required: false,
+      unique: true
     },
     twitterHandle: {
       type: String,
-      required: false
+      required: false,
+      unique: true
     },
     instagramHandle: {
       type: String,
-      required: false
+      required: false,
+      unique: true
     },
     emailAddress: {
       type: String,
-      required: false
-    },
-    ensName: {
-      type: String,
-      required: false
+      required: false,
+      unique: true
     },
     createdNFTs: {
       type: [Schema.Types.ObjectId],

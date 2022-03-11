@@ -8,7 +8,8 @@ const TokenSchema = new Schema<TokenDocument>(
   {
     tokenID: {
       type: Number,
-      required: true
+      required: true,
+      unique: true
     },
     tokenURI: {
       type: String,
