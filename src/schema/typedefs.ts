@@ -12,12 +12,12 @@ export const typeDefs = gql`
     instagramHandle: String
     emailAddress: String
     ensName: String
-    createdNFTs: [Token!]
+    createdNFTs: [Voucher!]
     createdAt: String!
     updatedAt: String!
   }
 
-  type Token {
+  type Voucher {
     _id: ID!
     tokenID: Int!
     tokenURI: String!
@@ -30,10 +30,10 @@ export const typeDefs = gql`
 
   type Query {
     artists: [Artist]
-    tokens: [Token]
+    vouchers: [Voucher]
 
     artist(filters: ArtistFilter): Artist
-    token(filters: TokenFilter): Token
+    voucher(filters: VoucherFilter): Voucher
   }
 
   input ArtistFilter {
@@ -41,7 +41,7 @@ export const typeDefs = gql`
     ethAddress: String
   }
 
-  input TokenFilter {
+  input VoucherFilter {
     _id: String
     tokenID: Int
   }

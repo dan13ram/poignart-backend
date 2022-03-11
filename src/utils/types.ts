@@ -13,7 +13,7 @@ export interface ArtistInterface {
   createdNFTs: Types.ObjectId[];
 }
 
-export interface TokenInterface {
+export interface VoucherInterface {
   tokenID: number;
   tokenURI: string;
   minPrice: string; // in wei

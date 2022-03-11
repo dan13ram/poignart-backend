@@ -18,33 +18,27 @@ const ArtistSchema = new Schema<ArtistDocument>(
       type: String,
       required: true,
       unique: true,
-      index: true
+      match: /^0x[a-f0-9]{40}$/
     },
     discordHandle: {
       type: String,
-      required: true,
-      unique: true,
-      match: /^((?!(discordtag|everyone|here)#)((?!@|#|:|```).{2,32})#\d{4})/
+      required: true
     },
     telegramHandle: {
       type: String,
-      required: false,
-      unique: true
+      required: false
     },
     twitterHandle: {
       type: String,
-      required: false,
-      unique: true
+      required: false
     },
     instagramHandle: {
       type: String,
-      required: false,
-      unique: true
+      required: false
     },
     emailAddress: {
       type: String,
-      required: false,
-      unique: true
+      required: false
     },
     createdNFTs: {
       type: [Schema.Types.ObjectId],

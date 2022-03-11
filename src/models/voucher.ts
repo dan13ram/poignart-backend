@@ -1,10 +1,10 @@
 import { Document, Schema, model } from 'mongoose';
 
-import { TokenInterface } from '../utils/types';
+import { VoucherInterface } from '../utils/types';
 
-interface TokenDocument extends TokenInterface, Document {}
+interface VoucherDocument extends VoucherInterface, Document {}
 
-const TokenSchema = new Schema<TokenDocument>(
+const VoucherSchema = new Schema<VoucherDocument>(
   {
     tokenID: {
       type: Number,
@@ -32,4 +32,4 @@ const TokenSchema = new Schema<TokenDocument>(
   { timestamps: true }
 );
 
-export const Token = model<TokenDocument>('Token', TokenSchema);
+export const Voucher = model<VoucherDocument>('Voucher', VoucherSchema);

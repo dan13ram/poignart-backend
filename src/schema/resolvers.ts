@@ -1,53 +1,50 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import { Artist as artist } from '../models/artist';
-import { Token as token } from '../models/token';
+import { Artist } from '../models/artist';
+import { Voucher } from '../models/voucher';
 
-import { ArtistInterface, TokenInterface } from '../utils/types';
+import { ArtistInterface, VoucherInterface } from '../utils/types';
 
 export const resolvers = {
   Query: {
-    async artists(): Promise<ArtistInterface[]> {
-      const response = await artist.find().populate('createdNFTs');
-      return response;
-    },
-    async tokens(): Promise<TokenInterface[]> {
-      const response = await token.find().populate('createdBy');
+    async vouchers(): Promise<VoucherInterface[]> {
+      const response = await Voucher.find().populate('createdBy');
       return response;
     },
 
-    // individual record resolvers
-    async token(_parent: any, { filters }: any): Promise<TokenInterface> {
+    async voucher(_parent: any, { filters }: any): Promise<VoucherInterface> {
       const shouldApplyIdFilter = !!filters._id;
-      const shouldApplyTokenIdFilter = !!filters.token_id;
+      const shouldApplyVoucherIdFilter = !!filters.tokenID;
       let response: any;
 
       if (shouldApplyIdFilter) {
-        response = await artist.findById(filters._id).populate('createdBy');
-      } else if (shouldApplyTokenIdFilter) {
-        response = await artist
-          .findOne({
-            token_id: filters.token_id
-          })
-          .populate('createdBy');
+        response = await Voucher.findById(filters._id).populate('createdBy');
+      } else if (shouldApplyVoucherIdFilter) {
+        response = await Voucher.findOne({
+          tokenID: filters.tokenID
+        }).populate('createdBy');
       }
       return response;
     },
+
+    async artists(): Promise<ArtistInterface[]> {
+      const response = await Artist.find().populate('createdNFTs');
+      return response;
+    },
+
     async artist(_parent: any, { filters }: any): Promise<ArtistInterface> {
       const shouldApplyIdFilter = !!filters._id;
-      const shouldApplyEthFilter = !!filters.eth_address;
+      const shouldApplyEthFilter = !!filters.ethAddress;
 
       let response: any;
 
       if (shouldApplyIdFilter) {
-        response = await artist.findById(filters._id).populate('createdNFTs');
+        response = await Artist.findById(filters._id).populate('createdNFTs');
       } else if (shouldApplyEthFilter) {
-        response = await artist
-          .findOne({
-            eth_address: { $regex: filters.eth_address, $options: 'i' }
-          })
-          .populate('createdNFTs');
+        response = await Artist.findOne({
+          ethAddress: { $regex: filters.ethAddress, $options: 'i' }
+        }).populate('createdNFTs');
       }
       return response;
     }
