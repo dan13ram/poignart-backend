@@ -16,12 +16,13 @@ export const verifyToken = (req: Request): null | string => {
 
   try {
     const signature = verify(token, CONFIG.JWT_SECRET);
-    const address = utils.recoverAddress(
-      'Welcome to PoingART!',
+    const address = utils.verifyMessage(
+      'Welcome to PoignART!',
       signature as string
     );
     return address;
-  } catch (err) {
+  } catch (error) {
+    console.error('error verify token:', error);
     return null;
   }
 };
