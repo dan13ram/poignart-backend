@@ -32,9 +32,9 @@ ROUTES.get('/verify/:address', async (req: Request, res: Response) => {
   }
 });
 
-const handleMongoError = (res: Response, err: Error) => {
-  if (['ValidationError', 'DuplicateKeyError'].includes(err.name)) {
-    res.status(400).json({ error: err.message });
+const handleMongoError = (res: Response, err: unknown) => {
+  if (['ValidationError', 'DuplicateKeyError'].includes((err as Error)?.name)) {
+    res.status(400).json({ error: (err as Error).message });
   } else {
     res.status(500).json({ error: 'Internal Server Error' });
   }
@@ -45,7 +45,7 @@ ROUTES.post('/artist', async (req: Request, res: Response) => {
     const response = await createArtist(req.body);
     res.status(201).json(response);
   } catch (err) {
-    console.error('Error creating artist:', err.message);
+    console.error('Error creating artist:', (err as Error)?.message ?? err);
     handleMongoError(res, err);
   }
 });
@@ -63,7 +63,7 @@ ROUTES.post('/voucher', async (req: Request, res: Response) => {
     const response = await createVoucher(req.body);
     res.status(201).json(response);
   } catch (err) {
-    console.error('Error creating voucher:', err.message);
+    console.error('Error creating voucher:', (err as Error)?.message ?? err);
     handleMongoError(res, err);
   }
   getNextTokenID(true); // rebuild cache

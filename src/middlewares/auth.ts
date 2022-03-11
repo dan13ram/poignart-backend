@@ -1,7 +1,7 @@
-import { CONFIG } from 'config';
 import { utils } from 'ethers';
 import { NextFunction, Request, Response } from 'express';
 import { verify } from 'jsonwebtoken';
+import { CONFIG } from 'utils/config';
 
 type PoignartRequest = Request & { signer: string };
 
@@ -17,7 +17,7 @@ export const verifyToken = (req: Request): null | string => {
     const signature = verify(token, CONFIG.JWT_SECRET);
     const address = utils.verifyMessage(
       'Welcome to PoignART!',
-      signature as string
+      signature.toString()
     );
     return address;
   } catch (error) {

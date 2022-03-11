@@ -1,15 +1,5 @@
 version: '3.8'
 services:
-  mongodb:
-    image: mongo:latest
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: rootpassword
-    ports:
-      - 27017:27017
-    volumes:
-      - mongodb_data_container:/data/db
-
   backend:
     build:
       context: .
@@ -25,6 +15,3 @@ services:
       CRON_PRIVATE_KEY: ${CRON_PRIVATE_KEY}
       POIGNART_CONTRACT: ${POIGNART_CONTRACT}
       RPC_URL: ${RPC_URL}
-
-volumes:
-  mongodb_data_container:

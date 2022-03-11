@@ -14,4 +14,4 @@ ENV RPC_URL $RPC_URL
 
 RUN yarn install --frozen-lockfile
 
-CMD ["node", "dist/index.js"]
+CMD ["yarn", "start"]

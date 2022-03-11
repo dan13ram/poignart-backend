@@ -16,14 +16,18 @@ const merkleRootCron = async () => {
     if (newRoot !== oldRoot) {
       console.log('merkle root has changed, updating...');
       await updateMerkleRoot(newRoot);
-      console.log(`updated merkle root, oldRoot ${oldRoot} newRoot ${newRoot}`);
+      console.log('updated merkle root');
+      console.log('old root:', oldRoot);
+      console.log('new root:', newRoot);
     } else {
       console.log('merkle root has not changed, skipping...');
     }
   } catch (error) {
     console.error(
       'error updating merkle root:',
-      error?.error?.reason ?? error?.message
+      (error as { error: { reason: string } })?.error?.reason ??
+        (error as Error)?.message ??
+        error
     );
   }
 };

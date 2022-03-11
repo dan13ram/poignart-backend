@@ -11,7 +11,7 @@ export const createArtist = async (
 export const updateArtistById = async (
   id: string,
   record: ArtistInterface
-): Promise<ArtistInterface> => {
+): Promise<ArtistInterface | null> => {
   await Artist.updateOne({ _id: id }, { $set: record });
   const updatedArtist = await Artist.findById(id);
   return updatedArtist;

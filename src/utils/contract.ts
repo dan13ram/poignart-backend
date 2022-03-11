@@ -1,5 +1,5 @@
-import { CONFIG } from 'config';
 import { ethers } from 'ethers';
+import { CONFIG } from 'utils/config';
 
 export const ensureValidCronWallet = async (): Promise<void> => {
   const balance = await CONFIG.CRON_WALLET.getBalance();

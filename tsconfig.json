@@ -1,11 +1,25 @@
 {
   "compilerOptions": {
     "module": "commonjs",
+    "strict": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+    "importHelpers": true,
     "target": "es6",
     "rootDir": "src",
     "baseUrl": "src",
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "noEmit": true
+  },
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
   }
 }

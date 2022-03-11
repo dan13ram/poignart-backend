@@ -11,7 +11,7 @@ export const createVoucher = async (
 export const updateVoucherById = async (
   id: string,
   record: VoucherInterface
-): Promise<VoucherInterface> => {
+): Promise<VoucherInterface | null> => {
   await Voucher.updateOne({ _id: id }, { $set: record });
   const updatedVoucher = await Voucher.findById(id);
   return updatedVoucher;
