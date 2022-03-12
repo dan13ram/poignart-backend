@@ -21,10 +21,11 @@ export const createServer = async (): Promise<Application> => {
     typeDefs,
     resolvers,
     context: ({ req }) => {
-      if (!verifyToken(req)) throw Error('Unauthorized');
+      if (!verifyToken(req) && process.env.NODE_ENV !== 'development')
+        throw Error('Unauthorized');
     },
     plugins: [
-      process.env.NODE_ENV === 'production'
+      process.env.NODE_ENV !== 'development'
         ? ApolloServerPluginLandingPageProductionDefault({ footer: false })
         : ApolloServerPluginLandingPageGraphQLPlayground()
     ]
