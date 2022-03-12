@@ -1,6 +1,7 @@
 /* eslint-disable no-underscore-dangle, no-param-reassign */
 import { Artist, ArtistDocument } from 'models/artist';
 import { Voucher, VoucherDocument } from 'models/voucher';
+import { verifyOwnership } from 'utils/contract';
 import { VoucherInterface } from 'utils/types';
 
 export const createVoucher = async (
@@ -26,6 +27,30 @@ export const createVoucher = async (
   const voucher: VoucherDocument = await Voucher.create(record);
   artist.createdVouchers.push(voucher._id);
   artist.save();
+  return voucher;
+};
+
+export const redeemVoucher = async (
+  minterAddress: string,
+  record: { tokenID: number }
+): Promise<VoucherDocument> => {
+  const voucher: VoucherDocument | null = await Voucher.findOne({
+    tokenID: record.tokenID,
+    minted: false
+  });
+  if (!voucher || !(await verifyOwnership(minterAddress, record.tokenID))) {
+    const e = new Error(
+      'Voucher validation failed: Voucher does not exist or already minted'
+    );
+    e.name = 'ValidationError';
+    throw e;
+  }
+
+  voucher.minted = true;
+  voucher.mintedBy = minterAddress;
+  voucher.signature = '0x';
+  voucher.save();
+
   return voucher;
 };
 

@@ -1,6 +1,24 @@
 import { ethers } from 'ethers';
 import { CONFIG } from 'utils/config';
 
+export const verifyOwnership = async (
+  minterAddress: string,
+  tokenID: number
+): Promise<boolean> => {
+  const abi = new ethers.utils.Interface([
+    'function ownerOf(tokenId uint256) public view returns (address)'
+  ]);
+
+  const contract = new ethers.Contract(
+    CONFIG.POIGNART_CONTRACT,
+    abi,
+    CONFIG.CRON_WALLET
+  );
+
+  const ownerAddress = await contract.ownerOf(tokenID);
+  return minterAddress === ownerAddress.toLowerCase();
+};
+
 export const ensureValidCronWallet = async (): Promise<void> => {
   const balance = await CONFIG.CRON_WALLET.getBalance();
   if (balance.lte(0)) {

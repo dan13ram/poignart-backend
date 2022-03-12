@@ -1,4 +1,4 @@
-import { utils } from 'ethers';
+import { constants, utils } from 'ethers';
 import { NextFunction, Request, Response } from 'express';
 import { verify } from 'jsonwebtoken';
 import { CONFIG } from 'utils/config';
@@ -34,7 +34,7 @@ export const validateRequest = (
   next: NextFunction
 ): void => {
   const signer = verifyToken(req);
-  if (!signer) {
+  if (!signer || signer === constants.AddressZero) {
     res.status(401).json({ error: 'Unauthorized' });
   } else {
     (req as AuthRequest).signer = signer;

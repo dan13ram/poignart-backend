@@ -1,5 +1,9 @@
 import { createArtist } from 'controllers/artist';
-import { createVoucher, getNextTokenID } from 'controllers/voucher';
+import {
+  createVoucher,
+  getNextTokenID,
+  redeemVoucher
+} from 'controllers/voucher';
 import express, { Request, Response } from 'express';
 import { AuthRequest } from 'middlewares/auth';
 import { Artist } from 'models/artist';
@@ -62,6 +66,18 @@ ROUTES.post('/voucher', async (req: Request, res: Response) => {
     res.status(201).json(response);
   } catch (err) {
     console.error('Error creating voucher:', (err as Error)?.message ?? err);
+    handleMongoError(res, err);
+  }
+  getNextTokenID(true); // rebuild cache
+});
+
+ROUTES.put('/redeem', async (req: Request, res: Response) => {
+  try {
+    const address = (req as AuthRequest).signer;
+    const response = await redeemVoucher(address, req.body);
+    res.status(201).json(response);
+  } catch (err) {
+    console.error('Error redeeming voucher:', (err as Error)?.message ?? err);
     handleMongoError(res, err);
   }
   getNextTokenID(true); // rebuild cache
