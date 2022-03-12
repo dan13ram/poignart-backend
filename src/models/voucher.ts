@@ -1,5 +1,6 @@
 import { Document, model, Schema } from 'mongoose';
-import { VoucherInterface } from 'utils/types';
+
+import { VoucherInterface } from '@/utils/types';
 
 export interface VoucherDocument extends VoucherInterface, Document {}
 

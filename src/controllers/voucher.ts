@@ -1,8 +1,8 @@
 /* eslint-disable no-underscore-dangle, no-param-reassign */
-import { Artist, ArtistDocument } from 'models/artist';
-import { Voucher, VoucherDocument } from 'models/voucher';
-import { verifyOwnership } from 'utils/contract';
-import { VoucherInterface } from 'utils/types';
+import { Artist, ArtistDocument } from '@/models/artist';
+import { Voucher, VoucherDocument } from '@/models/voucher';
+import { verifyOwnership } from '@/utils/contract';
+import { VoucherInterface } from '@/utils/types';
 
 export const createVoucher = async (
   artistAddress: string,

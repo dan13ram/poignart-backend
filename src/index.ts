@@ -1,9 +1,10 @@
 import { Application } from 'express';
 import mongoose, { ConnectOptions } from 'mongoose';
-import { createServer } from 'server';
-import { CONFIG, initConfig } from 'utils/config';
-import { ensureValidCronWallet } from 'utils/contract';
-import { scheduleCrons } from 'utils/crons';
+
+import { createServer } from '@/server';
+import { CONFIG, initConfig } from '@/utils/config';
+import { ensureValidCronWallet } from '@/utils/contract';
+import { scheduleCrons } from '@/utils/crons';
 
 initConfig();
 

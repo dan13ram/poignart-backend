@@ -1,13 +1,14 @@
-import { createArtist } from 'controllers/artist';
+import express, { Request, Response } from 'express';
+
+import { createArtist } from '@/controllers/artist';
 import {
   createVoucher,
   getNextTokenID,
   redeemVoucher
-} from 'controllers/voucher';
-import express, { Request, Response } from 'express';
-import { AuthRequest } from 'middlewares/auth';
-import { Artist } from 'models/artist';
-import { getSnapshot } from 'utils/snapshot';
+} from '@/controllers/voucher';
+import { AuthRequest } from '@/middlewares/auth';
+import { Artist } from '@/models/artist';
+import { getSnapshot } from '@/utils/snapshot';
 
 const ROUTES = express.Router();
 

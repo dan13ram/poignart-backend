@@ -1,7 +1,8 @@
 import { constants, utils } from 'ethers';
 import { NextFunction, Request, Response } from 'express';
 import { verify } from 'jsonwebtoken';
-import { CONFIG } from 'utils/config';
+
+import { CONFIG } from '@/utils/config';
 
 export interface AuthRequest extends Request {
   signer: string;

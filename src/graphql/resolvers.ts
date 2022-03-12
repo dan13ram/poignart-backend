@@ -1,7 +1,8 @@
 /* eslint-disable no-restricted-syntax, no-underscore-dangle, @typescript-eslint/explicit-module-boundary-types */
 import { GraphQLJSON } from 'graphql-type-json';
-import { Artist, ArtistDocument } from 'models/artist';
-import { Voucher, VoucherDocument } from 'models/voucher';
+
+import { Artist, ArtistDocument } from '@/models/artist';
+import { Voucher, VoucherDocument } from '@/models/voucher';
 
 export const resolvers = {
   JSON: GraphQLJSON,

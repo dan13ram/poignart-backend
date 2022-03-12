@@ -17,7 +17,10 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "outDir": "dist",
-    "noEmit": true
+    "noEmit": true,
+    "paths": {
+      "@/*": ["*"]
+    }
   },
   "ts-node": {
     "require": ["tsconfig-paths/register"]

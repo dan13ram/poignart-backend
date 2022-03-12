@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
-import { CONFIG } from 'utils/config';
+
+import { CONFIG } from '@/utils/config';
 
 export const verifyOwnership = async (
   minterAddress: string,
