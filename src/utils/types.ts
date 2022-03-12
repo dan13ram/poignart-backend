@@ -10,7 +10,7 @@ export interface ArtistInterface {
   instagramHandle?: string;
   emailAddress?: string;
   ensName?: string;
-  createdNFTs: Types.ObjectId[];
+  createdVouchers: Types.ObjectId[];
 }
 
 export interface VoucherInterface {

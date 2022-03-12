@@ -12,7 +12,7 @@ export const typeDefs = gql`
     instagramHandle: String
     emailAddress: String
     ensName: String
-    createdNFTs: [Voucher!]
+    createdVouchers: [Voucher!]
     createdAt: String!
     updatedAt: String!
   }

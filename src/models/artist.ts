@@ -1,7 +1,7 @@
 import { Document, model, Schema } from 'mongoose';
 import { ArtistInterface } from 'utils/types';
 
-interface ArtistDocument extends ArtistInterface, Document {}
+export interface ArtistDocument extends ArtistInterface, Document {}
 
 const ArtistSchema = new Schema<ArtistDocument>(
   {
@@ -39,11 +39,13 @@ const ArtistSchema = new Schema<ArtistDocument>(
       type: String,
       required: false
     },
-    createdNFTs: {
-      type: [Schema.Types.ObjectId],
-      ref: 'Artist',
-      required: true
-    }
+    createdVouchers: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Voucher',
+        required: true
+      }
+    ]
   },
   { timestamps: true }
 );

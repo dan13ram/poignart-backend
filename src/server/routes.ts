@@ -14,7 +14,7 @@ ROUTES.get('/verify', async (req: Request, res: Response) => {
       getSnapshot(),
       Artist.findOne({
         ethAddress: address
-      }).populate('createdNFTs'),
+      }).populate('createdVouchers'),
       getNextTokenID()
     ]);
     const proof = snapshot.getMerkleProof(address);
@@ -51,13 +51,14 @@ ROUTES.post('/voucher', async (req: Request, res: Response) => {
   try {
     const nextTokenID = await getNextTokenID();
     if (Number(req.body.tokenID) !== nextTokenID) {
-      // eslint-disable-next-line no-throw-literal
-      throw {
-        name: 'ValidationError',
-        message: `Token validation failed: tokenID: Next available tokenID is ${nextTokenID} (${req.body.tokenID})`
-      } as Error;
+      const e = new Error(
+        `Voucher validation failed: tokenID: Next available tokenID is ${nextTokenID} (${req.body.tokenID})`
+      );
+      e.name = 'ValidationError';
+      throw e;
     }
-    const response = await createVoucher(req.body);
+    const address = (req as AuthRequest).signer;
+    const response = await createVoucher(address, req.body);
     res.status(201).json(response);
   } catch (err) {
     console.error('Error creating voucher:', (err as Error)?.message ?? err);

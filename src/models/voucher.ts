@@ -1,7 +1,7 @@
 import { Document, model, Schema } from 'mongoose';
 import { VoucherInterface } from 'utils/types';
 
-interface VoucherDocument extends VoucherInterface, Document {}
+export interface VoucherDocument extends VoucherInterface, Document {}
 
 const VoucherSchema = new Schema<VoucherDocument>(
   {
