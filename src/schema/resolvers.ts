@@ -6,8 +6,17 @@ import { Voucher, VoucherDocument } from 'models/voucher';
 export const resolvers = {
   JSON: GraphQLJSON,
   Query: {
-    async vouchers(): Promise<VoucherDocument[]> {
-      const response: any[] = await Voucher.find().populate('createdBy');
+    async vouchers(_parent: any, { where }: any): Promise<VoucherDocument[]> {
+      const shouldApplyMinterFilter = [true, false].includes(where?.minted);
+
+      let response: any[];
+      if (shouldApplyMinterFilter) {
+        response = await Voucher.find({ minted: where.minted }).populate(
+          'createdBy'
+        );
+      } else {
+        response = await Voucher.find().populate('createdBy');
+      }
       response.forEach(r => {
         // eslint-disable-next-line no-param-reassign
         r.metadata = JSON.parse(r.metadataString);
@@ -15,16 +24,16 @@ export const resolvers = {
       return response;
     },
 
-    async voucher(_parent: any, { filters }: any): Promise<VoucherDocument> {
-      const shouldApplyIdFilter = !!filters._id;
-      const shouldApplyVoucherIdFilter = !!filters.tokenID;
+    async voucher(_parent: any, { where }: any): Promise<VoucherDocument> {
+      const shouldApplyIdFilter = !!where._id;
+      const shouldApplyVoucherIdFilter = !!where.tokenID;
       let response: any;
 
       if (shouldApplyIdFilter) {
-        response = await Voucher.findById(filters._id).populate('createdBy');
+        response = await Voucher.findById(where._id).populate('createdBy');
       } else if (shouldApplyVoucherIdFilter) {
         response = await Voucher.findOne({
-          tokenID: filters.tokenID
+          tokenID: where.tokenID
         }).populate('createdBy');
       }
       response.metadata = JSON.parse(response.metadataString);
@@ -36,19 +45,17 @@ export const resolvers = {
       return response;
     },
 
-    async artist(_parent: any, { filters }: any): Promise<ArtistDocument> {
-      const shouldApplyIdFilter = !!filters._id;
-      const shouldApplyEthFilter = !!filters.ethAddress;
+    async artist(_parent: any, { where }: any): Promise<ArtistDocument> {
+      const shouldApplyIdFilter = !!where._id;
+      const shouldApplyEthFilter = !!where.ethAddress;
 
       let response: any;
 
       if (shouldApplyIdFilter) {
-        response = await Artist.findById(filters._id).populate(
-          'createdVouchers'
-        );
+        response = await Artist.findById(where._id).populate('createdVouchers');
       } else if (shouldApplyEthFilter) {
         response = await Artist.findOne({
-          ethAddress: { $regex: filters.ethAddress, $options: 'i' }
+          ethAddress: { $regex: where.ethAddress, $options: 'i' }
         }).populate('createdVouchers');
       }
       return response;

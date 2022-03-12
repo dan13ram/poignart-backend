@@ -35,10 +35,14 @@ export const typeDefs = gql`
 
   type Query {
     artists: [Artist]
-    vouchers: [Voucher]
+    vouchers(where: VouchersFilter): [Voucher]
 
-    artist(filters: ArtistFilter): Artist
-    voucher(filters: VoucherFilter): Voucher
+    artist(where: ArtistFilter): Artist
+    voucher(where: VoucherFilter): Voucher
+  }
+
+  input VouchersFilter {
+    minted: Boolean
   }
 
   input ArtistFilter {
