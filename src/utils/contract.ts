@@ -6,7 +6,7 @@ let MINTER_ROLE: string;
 const getMinterRole = async (): Promise<string> => {
   if (MINTER_ROLE) return MINTER_ROLE;
   const abi = new ethers.utils.Interface([
-    'function MINTER_JOB() public view returns (bytes32)'
+    'function MINTER_ROLE() public view returns (bytes32)'
   ]);
 
   const contract = new ethers.Contract(
@@ -14,7 +14,7 @@ const getMinterRole = async (): Promise<string> => {
     abi,
     CONFIG.CRON_WALLET
   );
-  MINTER_ROLE = await contract.MINTER_JOB();
+  MINTER_ROLE = await contract.MINTER_ROLE();
   return MINTER_ROLE;
 };
 

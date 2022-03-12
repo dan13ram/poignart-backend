@@ -1,7 +1,10 @@
 /* eslint-disable no-underscore-dangle, no-param-reassign */
+import { utils } from 'ethers';
+
 import { Artist } from '@/models/artist';
 import { Voucher, VoucherDocument } from '@/models/voucher';
 import { isMinter, verifyOwnership } from '@/utils/contract';
+import { getTypedDataOptions } from '@/utils/helpers';
 import { VoucherInterface } from '@/utils/types';
 
 export const getNextTokenID = async () => {
@@ -37,6 +40,24 @@ export const createVoucher = async (
   if (!artist) {
     const e = new Error(
       'Voucher validation failed: createdBy: Artist does not exist'
+    );
+    e.name = 'ValidationError';
+    throw e;
+  }
+  const { domain, types } = getTypedDataOptions();
+  const recoverredAddress = utils.verifyTypedData(
+    domain,
+    types,
+    {
+      tokenId: record.tokenID,
+      minPrice: record.minPrice,
+      uri: record.tokenURI
+    },
+    record.signature
+  );
+  if (recoverredAddress.toLowerCase() !== artistAddress) {
+    const e = new Error(
+      'Voucher validation failed: signature: Invalid signature'
     );
     e.name = 'ValidationError';
     throw e;
