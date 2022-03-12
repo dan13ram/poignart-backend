@@ -23,3 +23,8 @@ export interface VoucherInterface {
   mintedBy?: string;
   metadataString: string;
 }
+
+export interface WhitelistInterface {
+  ethAddress: string;
+  createdBy: string;
+}

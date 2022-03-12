@@ -4,6 +4,9 @@ import keccak256 from 'keccak256';
 import MerkleTree from 'merkletreejs';
 import path from 'path';
 
+import { Whitelist } from '@/models/whitelist';
+import { getMerkleRoot, updateMerkleRoot } from '@/utils/contract';
+
 const unique = (a: Array<string>): Array<string> => {
   const seen: Record<string, boolean> = {};
   // eslint-disable-next-line no-return-assign
@@ -47,12 +50,27 @@ class Snapshot {
     return this.merkleTree.getHexProof(leaf);
   }
 
-  public verifyAddress(address: string, proof: string[]) {
+  public verifyAddress(address: string) {
     const leaf = generateLeaf(address);
+    const proof = this.merkleTree.getHexProof(leaf);
     const root = this.getMerkleRoot();
     return this.merkleTree.verify(proof, leaf, root);
   }
 }
+
+const updateMerkleRootInContract = async (newRoot: string) => {
+  const oldRoot = await getMerkleRoot();
+
+  if (newRoot !== oldRoot) {
+    console.log('merkle root has changed, updating...');
+    await updateMerkleRoot(newRoot);
+    console.log('updated merkle root');
+    console.log('old root:', oldRoot);
+    console.log('new root:', newRoot);
+  } else {
+    console.log('merkle root has not changed, skipping...');
+  }
+};
 
 const whitelistFile = path.join(__dirname, 'whitelist.txt');
 
@@ -60,21 +78,22 @@ let snapshot: Snapshot;
 
 export const getSnapshot = async (rebuild = false): Promise<Snapshot> => {
   if (snapshot && !rebuild) return snapshot;
+
   const data = await fs.readFile(whitelistFile);
 
-  // TODO fetch this from mongodb and add api to add to it
-  const additionalAddresses = [
-    '0xc9f2d9adfa6c24ce0d5a999f2ba3c6b06e36f75e',
-    '0x9aE7B89BCeBe350CbBCdb7dD66e89c7d3629d641'
-  ];
+  const addedAddresses: string[] = [];
+  const added = await Whitelist.find();
+  added.forEach(a => addedAddresses.push(a.ethAddress));
 
   const addresses = data
     .toString()
     .split('\n')
-    .concat(...additionalAddresses)
+    .concat(...addedAddresses)
     .filter(a => !!a);
 
   snapshot = new Snapshot(addresses);
+
+  await updateMerkleRootInContract(snapshot.getMerkleRoot());
 
   return snapshot;
 };

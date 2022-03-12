@@ -6,8 +6,10 @@ import {
   getNextTokenID,
   redeemVoucher
 } from '@/controllers/voucher';
+import { createWhitelist } from '@/controllers/whitelist';
 import { AuthRequest } from '@/middlewares/auth';
 import { Artist } from '@/models/artist';
+import { handleMongoError } from '@/utils/helpers';
 import { getSnapshot } from '@/utils/snapshot';
 
 const ROUTES = express.Router();
@@ -23,7 +25,7 @@ ROUTES.get('/verify', async (req: Request, res: Response) => {
       getNextTokenID()
     ]);
     const proof = snapshot.getMerkleProof(address);
-    const verified = snapshot.verifyAddress(address, proof);
+    const verified = snapshot.verifyAddress(address);
 
     res
       .status(200)
@@ -34,17 +36,17 @@ ROUTES.get('/verify', async (req: Request, res: Response) => {
   }
 });
 
-const handleMongoError = (res: Response, err: unknown) => {
-  if (['ValidationError', 'DuplicateKeyError'].includes((err as Error)?.name)) {
-    res.status(400).json({ error: (err as Error).message });
-  } else {
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-};
-
 ROUTES.post('/artist', async (req: Request, res: Response) => {
   try {
-    const response = await createArtist(req.body);
+    const address = (req as AuthRequest).signer;
+    const snapshot = await getSnapshot();
+    const verified = snapshot.verifyAddress(address);
+    if (!verified || address !== req.body.ethAddress?.toLowerCase()) {
+      const e = new Error(`Artist validation failed: not whilelisted`);
+      e.name = 'ValidationError';
+      throw e;
+    }
+    const response = await createArtist(address, req.body);
     res.status(201).json(response);
   } catch (err) {
     console.error('Error creating artist:', (err as Error)?.message ?? err);
@@ -82,6 +84,27 @@ ROUTES.put('/redeem', async (req: Request, res: Response) => {
     handleMongoError(res, err);
   }
   getNextTokenID(true); // rebuild cache
+});
+
+ROUTES.post('/whitelist', async (req: Request, res: Response) => {
+  try {
+    const address = (req as AuthRequest).signer;
+    const snapshot = await getSnapshot();
+    const verified = snapshot.verifyAddress(address);
+    if (!verified) {
+      const e = new Error(`Whitelist validation failed: not whilelisted`);
+      e.name = 'ValidationError';
+      throw e;
+    }
+    const response = await createWhitelist(address, req.body.ethAddress);
+    res.status(201).json(response);
+  } catch (err) {
+    console.error(
+      'Error whitelisting address:',
+      (err as Error)?.message ?? err
+    );
+    handleMongoError(res, err);
+  }
 });
 
 export { ROUTES };
