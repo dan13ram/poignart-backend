@@ -19,4 +19,7 @@ export interface VoucherInterface {
   minPrice: string; // in wei
   createdBy: Types.ObjectId;
   signature: string;
+  minted: boolean;
+  mintedBy?: string;
+  metadataString: string;
 }

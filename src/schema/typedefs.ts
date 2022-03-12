@@ -1,6 +1,8 @@
 import { gql } from 'apollo-server-express';
 
 export const typeDefs = gql`
+  scalar JSON
+
   type Artist {
     _id: ID!
     name: String!
@@ -26,6 +28,9 @@ export const typeDefs = gql`
     signature: String!
     createdAt: String!
     updatedAt: String!
+    minted: Boolean!
+    metadata: JSON!
+    mintedBy: String
   }
 
   type Query {

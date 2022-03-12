@@ -1,11 +1,11 @@
-/* eslint-disable no-underscore-dangle */
+/* eslint-disable no-underscore-dangle, no-param-reassign */
 import { Artist, ArtistDocument } from 'models/artist';
 import { Voucher, VoucherDocument } from 'models/voucher';
 import { VoucherInterface } from 'utils/types';
 
 export const createVoucher = async (
   artistAddress: string,
-  record: VoucherInterface
+  record: VoucherInterface & { metadata?: Record<string, unknown> }
 ): Promise<VoucherDocument> => {
   const artist: ArtistDocument | null = await Artist.findOne({
     ethAddress: artistAddress
@@ -17,8 +17,12 @@ export const createVoucher = async (
     e.name = 'ValidationError';
     throw e;
   }
-  // eslint-disable-next-line no-param-reassign
+
   record.createdBy = artist._id;
+  record.minted = false;
+  record.mintedBy = undefined;
+  record.metadataString = JSON.stringify(record.metadata ?? {});
+
   const voucher: VoucherDocument = await Voucher.create(record);
   artist.createdVouchers.push(voucher._id);
   artist.save();

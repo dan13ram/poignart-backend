@@ -26,6 +26,18 @@ const VoucherSchema = new Schema<VoucherDocument>(
     signature: {
       type: String,
       required: true
+    },
+    minted: {
+      type: Boolean,
+      required: true
+    },
+    mintedBy: {
+      type: String,
+      required: false
+    },
+    metadataString: {
+      type: String,
+      required: true
     }
   },
   { timestamps: true }

@@ -1,11 +1,17 @@
 /* eslint-disable no-restricted-syntax, no-underscore-dangle, @typescript-eslint/explicit-module-boundary-types */
+import { GraphQLJSON } from 'graphql-type-json';
 import { Artist, ArtistDocument } from 'models/artist';
 import { Voucher, VoucherDocument } from 'models/voucher';
 
 export const resolvers = {
+  JSON: GraphQLJSON,
   Query: {
     async vouchers(): Promise<VoucherDocument[]> {
-      const response = await Voucher.find().populate('createdBy');
+      const response: any[] = await Voucher.find().populate('createdBy');
+      response.forEach(r => {
+        // eslint-disable-next-line no-param-reassign
+        r.metadata = JSON.parse(r.metadataString);
+      });
       return response;
     },
 
@@ -21,6 +27,7 @@ export const resolvers = {
           tokenID: filters.tokenID
         }).populate('createdBy');
       }
+      response.metadata = JSON.parse(response.metadataString);
       return response;
     },
 
