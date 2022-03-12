@@ -41,7 +41,7 @@ ROUTES.post('/voucher', async (req: Request, res: Response) => {
   }
 });
 
-ROUTES.put('/redeem', async (req: Request, res: Response) => {
+ROUTES.post('/redeem', async (req: Request, res: Response) => {
   try {
     const address = (req as AuthRequest).signer;
     const response = await redeemVoucher(address, req.body);
