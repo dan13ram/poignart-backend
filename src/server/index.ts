@@ -5,10 +5,10 @@ import {
 import { ApolloServer } from 'apollo-server-express';
 import cors from 'cors';
 import express, { Application, Request, Response } from 'express';
+import { resolvers } from 'graphql/resolvers';
+import { typeDefs } from 'graphql/typedefs';
 import { validateRequest, verifyToken } from 'middlewares/auth';
 import morgan from 'morgan';
-import { resolvers } from 'schema/resolvers';
-import { typeDefs } from 'schema/typedefs';
 import { ROUTES } from 'server/routes';
 
 export const createServer = async (): Promise<Application> => {
