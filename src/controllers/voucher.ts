@@ -76,14 +76,19 @@ export const createVoucher = async (
 
 export const redeemVoucher = async (
   minterAddress: string,
-  record: { tokenID: number }
+  tokenID: number
 ): Promise<VoucherDocument> => {
+  if (Number.isNaN(tokenID)) {
+    const e = new Error('Voucher validation failed: Invalid tokenID');
+    e.name = 'ValidationError';
+    throw e;
+  }
   const [voucher, isOwner] = await Promise.all([
     Voucher.findOne({
-      tokenID: record.tokenID,
+      tokenID,
       minted: false
     }),
-    verifyOwnership(minterAddress, record.tokenID)
+    verifyOwnership(minterAddress, tokenID)
   ]);
   if (!voucher) {
     const e = new Error(

@@ -44,7 +44,7 @@ ROUTES.post('/voucher', async (req: Request, res: Response) => {
 ROUTES.post('/redeem', async (req: Request, res: Response) => {
   try {
     const address = (req as AuthRequest).signer;
-    const response = await redeemVoucher(address, req.body);
+    const response = await redeemVoucher(address, Number(req.body.tokenID));
     res.status(201).json({ response });
   } catch (err) {
     console.error('Error redeeming voucher:', (err as Error)?.message ?? err);
