@@ -39,7 +39,7 @@ export const verifyOwnership = async (
   tokenID: number
 ): Promise<boolean> => {
   const abi = new ethers.utils.Interface([
-    'function ownerOf(tokenId uint256) public view returns (address)'
+    'function ownerOf(uint256 tokenId) public view returns (address)'
   ]);
 
   const contract = new ethers.Contract(
@@ -48,8 +48,13 @@ export const verifyOwnership = async (
     CONFIG.CRON_WALLET
   );
 
-  const ownerAddress = await contract.ownerOf(tokenID);
-  return minterAddress === ownerAddress.toLowerCase();
+  try {
+    const ownerAddress = await contract.ownerOf(tokenID);
+    return minterAddress === ownerAddress.toLowerCase();
+  } catch (error) {
+    console.error('Error fetching ownerOf', error);
+    return false;
+  }
 };
 
 export const ensureValidCronWallet = async (): Promise<void> => {
