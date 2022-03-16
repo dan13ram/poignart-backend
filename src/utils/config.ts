@@ -10,6 +10,8 @@ type ConfigType = {
   POIGNART_CONTRACT: string;
   CRON_WALLET: Wallet;
   CHAIN_ID: number;
+  MAX_VOUCHERS: number;
+  RATE_LIMIT_DURATION: number;
 };
 
 export const CONFIG: ConfigType = {
@@ -18,7 +20,9 @@ export const CONFIG: ConfigType = {
   JWT_SECRET: '',
   POIGNART_CONTRACT: '',
   CRON_WALLET: Wallet.createRandom(),
-  CHAIN_ID: 0
+  CHAIN_ID: 0,
+  MAX_VOUCHERS: 10,
+  RATE_LIMIT_DURATION: 60 * 60 * 1000 // 10 per hr
 };
 
 export const initConfig = () => {
@@ -29,7 +33,9 @@ export const initConfig = () => {
     POIGNART_CONTRACT,
     CRON_PRIVATE_KEY,
     RPC_URL,
-    CHAIN_ID
+    CHAIN_ID,
+    MAX_VOUCHERS,
+    RATE_LIMIT_DURATION
   } = process.env;
   if (
     !MONGODB_URI ||
@@ -38,7 +44,12 @@ export const initConfig = () => {
     !utils.isAddress(POIGNART_CONTRACT) ||
     !CRON_PRIVATE_KEY ||
     !RPC_URL ||
-    !CHAIN_ID
+    !CHAIN_ID ||
+    Number.isNaN(Number(CHAIN_ID)) ||
+    !MAX_VOUCHERS ||
+    Number.isNaN(Number(MAX_VOUCHERS)) ||
+    !RATE_LIMIT_DURATION ||
+    Number.isNaN(Number(RATE_LIMIT_DURATION))
   ) {
     throw new Error('Invalid ENV variables');
   }
@@ -52,4 +63,6 @@ export const initConfig = () => {
     new providers.JsonRpcProvider(RPC_URL)
   );
   CONFIG.CHAIN_ID = Number(CHAIN_ID);
+  CONFIG.MAX_VOUCHERS = Number(MAX_VOUCHERS);
+  CONFIG.RATE_LIMIT_DURATION = Number(RATE_LIMIT_DURATION);
 };

@@ -3,6 +3,7 @@ import { utils } from 'ethers';
 
 import { Artist } from '@/models/artist';
 import { Voucher, VoucherDocument } from '@/models/voucher';
+import { CONFIG } from '@/utils/config';
 import { isMinter, verifyOwnership } from '@/utils/contract';
 import { getTypedDataOptions } from '@/utils/helpers';
 import { VoucherInterface } from '@/utils/types';
@@ -44,6 +45,21 @@ export const createVoucher = async (
     e.name = 'ValidationError';
     throw e;
   }
+
+  const lastTime = new Date();
+  lastTime.setTime(lastTime.getTime() - CONFIG.RATE_LIMIT_DURATION);
+
+  const lastTimeVouchers = await Voucher.find({
+    createdBy: artist._id,
+    createdAt: { $gt: lastTime }
+  });
+
+  if (lastTimeVouchers.length >= CONFIG.MAX_VOUCHERS) {
+    const e = new Error('Voucher validation failed: Too many vouchers');
+    e.name = 'ValidationError';
+    throw e;
+  }
+
   const { domain, types } = getTypedDataOptions();
   const recoverredAddress = utils.verifyTypedData(
     domain,

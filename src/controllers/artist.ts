@@ -1,6 +1,8 @@
 /* eslint-disable no-param-reassign */
 import { getNextTokenID } from '@/controllers/voucher';
 import { Artist, ArtistDocument } from '@/models/artist';
+import { Voucher } from '@/models/voucher';
+import { CONFIG } from '@/utils/config';
 import { getSnapshot } from '@/utils/snapshot';
 import { ArtistInterface } from '@/utils/types';
 
@@ -11,7 +13,11 @@ export const verifyArtist = async (
   proof: string[];
   artist: ArtistDocument | null;
   nextTokenID: number;
+  rateLimited: boolean;
 }> => {
+  const lastTime = new Date();
+  lastTime.setTime(lastTime.getTime() - CONFIG.RATE_LIMIT_DURATION);
+
   const [snapshot, artist, nextTokenID] = await Promise.all([
     getSnapshot(),
     Artist.findOne({
@@ -19,13 +25,26 @@ export const verifyArtist = async (
     }).populate('createdVouchers'),
     getNextTokenID()
   ]);
+
+  let rateLimited = false;
+
+  if (artist) {
+    const lastTimeVouchers = await Voucher.find({
+      createdBy: artist._id, // eslint-disable-line no-underscore-dangle
+      createdAt: { $gt: lastTime }
+    });
+
+    rateLimited = lastTimeVouchers.length >= CONFIG.MAX_VOUCHERS;
+  }
+
   const proof = snapshot.getMerkleProof(artistAddress);
   const verified = snapshot.verifyAddress(artistAddress);
   return {
     verified,
     proof,
     artist,
-    nextTokenID
+    nextTokenID,
+    rateLimited
   };
 };
 
