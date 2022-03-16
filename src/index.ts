@@ -15,12 +15,11 @@ mongoose
   } as ConnectOptions)
   .then(() => {
     createServer().then((app: Application) => {
+      app.listen(CONFIG.PORT, () =>
+        console.log(`Listening on port ${CONFIG.PORT}`)
+      );
       ensureValidCronWallet().then(() => {
-        scheduleCrons().then(() => {
-          app.listen(CONFIG.PORT, () =>
-            console.log(`Listening on port ${CONFIG.PORT}`)
-          );
-        });
+        scheduleCrons();
       });
     });
   });
