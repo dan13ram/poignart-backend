@@ -22,7 +22,7 @@ export const createServer = async (): Promise<Application> => {
     typeDefs,
     resolvers,
     context: ({ req }) => {
-      if (!verifyToken(req) && process.env.NODE_ENV !== 'development')
+      if (process.env.NODE_ENV !== 'development' && !verifyToken(req))
         throw Error('Unauthorized');
     },
     plugins: [

@@ -39,6 +39,10 @@ const VoucherSchema = new Schema<VoucherDocument>(
     metadataString: {
       type: String,
       required: true
+    },
+    contentType: {
+      type: String,
+      required: true
     }
   },
   { timestamps: true }

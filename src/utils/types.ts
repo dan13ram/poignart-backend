@@ -22,6 +22,7 @@ export interface VoucherInterface {
   minted: boolean;
   mintedBy?: string;
   metadataString: string;
+  contentType: string;
 }
 
 export interface WhitelistInterface {

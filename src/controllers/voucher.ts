@@ -83,6 +83,20 @@ export const createVoucher = async (
   record.minted = false;
   record.mintedBy = undefined;
   record.metadataString = JSON.stringify(record.metadata ?? {});
+  if (record.metadataString.length > 1500) {
+    const e = new Error(
+      'Voucher validation failed: metadata: Longer than 1500 characters'
+    );
+    e.name = 'ValidationError';
+    throw e;
+  }
+  if (!['audio', 'video', 'image'].includes(record.contentType)) {
+    const e = new Error(
+      `Voucher validation failed: contentType: Invalid contentType (${record.contentType})`
+    );
+    e.name = 'ValidationError';
+    throw e;
+  }
 
   const voucher: VoucherDocument = await Voucher.create(record);
   artist.createdVouchers.push(voucher._id);

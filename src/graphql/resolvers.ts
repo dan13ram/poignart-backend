@@ -9,12 +9,22 @@ export const resolvers = {
   Query: {
     async vouchers(_parent: any, { where }: any): Promise<VoucherDocument[]> {
       const shouldApplyMinterFilter = [true, false].includes(where?.minted);
+      const shouldApplyTypeFilter = !!where?.contentType;
 
       let response: any[];
-      if (shouldApplyMinterFilter) {
+      if (shouldApplyMinterFilter && !shouldApplyTypeFilter) {
         response = await Voucher.find({ minted: where.minted }).populate(
           'createdBy'
         );
+      } else if (shouldApplyTypeFilter && !shouldApplyMinterFilter) {
+        response = await Voucher.find({
+          contentType: where.contentType
+        }).populate('createdBy');
+      } else if (shouldApplyMinterFilter && shouldApplyTypeFilter) {
+        response = await Voucher.find({
+          minted: where.minted,
+          contentType: where.contentType
+        }).populate('createdBy');
       } else {
         response = await Voucher.find().populate('createdBy');
       }

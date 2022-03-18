@@ -31,6 +31,7 @@ export const typeDefs = gql`
     minted: Boolean!
     metadata: JSON!
     mintedBy: String
+    contentType: String!
   }
 
   type Query {
@@ -43,6 +44,7 @@ export const typeDefs = gql`
 
   input VouchersFilter {
     minted: Boolean
+    contentType: String
   }
 
   input ArtistFilter {
