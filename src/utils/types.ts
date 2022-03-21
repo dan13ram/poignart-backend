@@ -9,7 +9,7 @@ export interface ArtistInterface {
   twitterHandle?: string;
   instagramHandle?: string;
   emailAddress?: string;
-  ensName?: string;
+  website?: string;
   createdVouchers: Types.ObjectId[];
 }
 

@@ -40,6 +40,10 @@ const ArtistSchema = new Schema<ArtistDocument>(
       type: String,
       required: false
     },
+    website: {
+      type: String,
+      required: false
+    },
     createdVouchers: [
       {
         type: Schema.Types.ObjectId,

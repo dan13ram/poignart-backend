@@ -13,7 +13,7 @@ export const typeDefs = gql`
     twitterHandle: String
     instagramHandle: String
     emailAddress: String
-    ensName: String
+    website: String
     createdVouchers: [Voucher!]
     createdAt: String!
     updatedAt: String!

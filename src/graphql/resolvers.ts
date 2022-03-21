@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-syntax, no-underscore-dangle, @typescript-eslint/explicit-module-boundary-types */
+/* eslint-disable no-restricted-syntax, no-underscore-dangle, @typescript-eslint/explicit-module-boundary-types, no-param-reassign */
 import { GraphQLJSON } from 'graphql-type-json';
 
 import { Artist, ArtistDocument } from '@/models/artist';
@@ -52,15 +52,25 @@ export const resolvers = {
     },
 
     async artists(): Promise<ArtistDocument[]> {
-      const response = await Artist.find().populate('createdVouchers');
+      let response = await Artist.find().populate('createdVouchers');
+      response = response.map(a => {
+        a.createdVouchers = a.createdVouchers.map(v => {
+          (v as any).metadata = JSON.parse(
+            (v as unknown as VoucherDocument).metadataString
+          );
+          return v;
+        });
+        return a;
+      });
+
       return response;
     },
 
-    async artist(_parent: any, { where }: any): Promise<ArtistDocument> {
+    async artist(_parent: any, { where }: any): Promise<ArtistDocument | null> {
       const shouldApplyIdFilter = !!where._id;
       const shouldApplyEthFilter = !!where.ethAddress;
 
-      let response: any;
+      let response: ArtistDocument | null;
 
       if (shouldApplyIdFilter) {
         response = await Artist.findById(where._id).populate('createdVouchers');
@@ -68,7 +78,18 @@ export const resolvers = {
         response = await Artist.findOne({
           ethAddress: { $regex: where.ethAddress, $options: 'i' }
         }).populate('createdVouchers');
+      } else {
+        return null;
       }
+      if (response && response.createdVouchers.length > 0) {
+        response.createdVouchers = response.createdVouchers.map(v => {
+          (v as any).metadata = JSON.parse(
+            (v as unknown as VoucherDocument).metadataString
+          );
+          return v;
+        });
+      }
+
       return response;
     }
   }
