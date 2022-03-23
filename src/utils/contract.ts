@@ -82,7 +82,7 @@ export const ensureValidCronWallet = async (): Promise<void> => {
   }
 };
 
-export const isMinter = async (address: string): Promise<boolean> => {
+export const hasMinterRole = async (address: string): Promise<boolean> => {
   const abi = new ethers.utils.Interface([
     'function hasRole(bytes32 role, address account) public view returns (bool)'
   ]);

@@ -4,8 +4,9 @@ import { utils } from 'ethers';
 import { Artist } from '@/models/artist';
 import { Voucher, VoucherDocument } from '@/models/voucher';
 import { CONFIG } from '@/utils/config';
-import { isMinter, verifyOwnership } from '@/utils/contract';
+import { verifyOwnership } from '@/utils/contract';
 import { getTypedDataOptions } from '@/utils/helpers';
+import { getSnapshot } from '@/utils/snapshot';
 import { VoucherInterface } from '@/utils/types';
 
 export const getNextTokenID = async () => {
@@ -19,9 +20,9 @@ export const createVoucher = async (
   artistAddress: string,
   record: VoucherInterface & { metadata?: Record<string, unknown> }
 ): Promise<VoucherDocument> => {
-  const [nextTokenID, isVetted, artist] = await Promise.all([
+  const [nextTokenID, snapshot, artist] = await Promise.all([
     getNextTokenID(),
-    isMinter(artistAddress),
+    getSnapshot(),
     Artist.findOne({ ethAddress: artistAddress })
   ]);
   if (Number(record.tokenID) !== nextTokenID) {
@@ -31,9 +32,10 @@ export const createVoucher = async (
     e.name = 'ValidationError';
     throw e;
   }
-  if (!isVetted) {
+  const verified = snapshot.verifyAddress(artistAddress);
+  if (!verified) {
     const e = new Error(
-      `Voucher validation failed: createdBy: Artist not vetted`
+      `Voucher validation failed: createdBy: Artist not in merkle tree`
     );
     e.name = 'ValidationError';
     throw e;
