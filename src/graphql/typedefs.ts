@@ -17,6 +17,7 @@ export const typeDefs = gql`
     createdVouchers: [Voucher!]
     createdAt: String!
     updatedAt: String!
+    merkleProof: [String!]!
   }
 
   type Voucher {
