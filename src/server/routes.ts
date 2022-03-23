@@ -19,6 +19,17 @@ ROUTES.get('/verify', async (req: Request, res: Response) => {
   }
 });
 
+ROUTES.get('/verify/:address', async (req: Request, res: Response) => {
+  try {
+    const { address } = req.params;
+    const response = await verifyArtist(address);
+    res.status(200).json({ response });
+  } catch (err) {
+    console.error('Error verifying artist:', (err as Error)?.message ?? err);
+    handleMongoError(res, err);
+  }
+});
+
 ROUTES.post('/artist', async (req: Request, res: Response) => {
   try {
     const address = (req as AuthRequest).signer;
