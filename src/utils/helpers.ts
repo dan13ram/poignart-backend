@@ -25,7 +25,7 @@ export const getTypedDataOptions = (): {
   types: Record<string, Array<TypedDataField>>;
 } => {
   const domain: TypedDataDomain = {
-    name: 'PoignardVoucher',
+    name: 'PoignartVoucher',
     version: '1',
     verifyingContract: CONFIG.POIGNART_CONTRACT,
     chainId: CONFIG.CHAIN_ID
