@@ -3,6 +3,7 @@ import { GraphQLJSON } from 'graphql-type-json';
 
 import { Artist, ArtistDocument } from '@/models/artist';
 import { Voucher, VoucherDocument } from '@/models/voucher';
+import { getSnapshot } from '@/utils/snapshot';
 
 export const resolvers = {
   JSON: GraphQLJSON,
@@ -28,9 +29,13 @@ export const resolvers = {
       } else {
         response = await Voucher.find().populate('createdBy');
       }
+      const snapshot = await getSnapshot();
       response.forEach(r => {
         // eslint-disable-next-line no-param-reassign
         r.metadata = JSON.parse(r.metadataString);
+        r.createdBy.merkleProof = snapshot.getMerkleProof(
+          r.createdBy.ethAddress
+        );
       });
       return response;
     },
@@ -47,14 +52,20 @@ export const resolvers = {
           tokenID: where.tokenID
         }).populate('createdBy');
       }
+      const snapshot = await getSnapshot();
       response.metadata = JSON.parse(response.metadataString);
+      response.createdBy.artistProof = snapshot.getMerkleProof(
+        response.createdBy.ethAddress
+      );
       return response;
     },
 
     async artists(): Promise<ArtistDocument[]> {
-      let response = await Artist.find().populate('createdVouchers');
+      let response: any[] = await Artist.find().populate('createdVouchers');
+      const snapshot = await getSnapshot();
       response = response.map(a => {
-        a.createdVouchers = a.createdVouchers.map(v => {
+        a.merkleProof = snapshot.getMerkleProof(a.ethAddress);
+        a.createdVouchers = a.createdVouchers.map((v: any) => {
           (v as any).metadata = JSON.parse(
             (v as unknown as VoucherDocument).metadataString
           );
@@ -81,13 +92,19 @@ export const resolvers = {
       } else {
         return null;
       }
-      if (response && response.createdVouchers.length > 0) {
-        response.createdVouchers = response.createdVouchers.map(v => {
-          (v as any).metadata = JSON.parse(
-            (v as unknown as VoucherDocument).metadataString
-          );
-          return v;
-        });
+      if (response) {
+        const snapshot = await getSnapshot();
+        (response as any).merkleProof = snapshot.getMerkleProof(
+          response.ethAddress
+        );
+        if (response.createdVouchers.length > 0) {
+          response.createdVouchers = response.createdVouchers.map(v => {
+            (v as any).metadata = JSON.parse(
+              (v as unknown as VoucherDocument).metadataString
+            );
+            return v;
+          });
+        }
       }
 
       return response;

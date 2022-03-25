@@ -1,4 +1,6 @@
 /* eslint-disable no-param-reassign */
+import { utils } from 'ethers';
+
 import { getNextTokenID } from '@/controllers/voucher';
 import { Artist, ArtistDocument } from '@/models/artist';
 import { Voucher } from '@/models/voucher';
@@ -15,6 +17,11 @@ export const verifyArtist = async (
   nextTokenID: number;
   rateLimited: boolean;
 }> => {
+  if (!utils.isAddress(artistAddress)) {
+    const e = new Error(`Artist validation failed: invalid ethAddress`);
+    e.name = 'ValidationError';
+    throw e;
+  }
   const lastTime = new Date();
   lastTime.setTime(lastTime.getTime() - CONFIG.RATE_LIMIT_DURATION);
 

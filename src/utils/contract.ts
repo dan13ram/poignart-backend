@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 
 import { CONFIG } from '@/utils/config';
 
@@ -82,7 +82,7 @@ export const ensureValidCronWallet = async (): Promise<void> => {
   }
 };
 
-export const isMinter = async (address: string): Promise<boolean> => {
+export const hasMinterRole = async (address: string): Promise<boolean> => {
   const abi = new ethers.utils.Interface([
     'function hasRole(bytes32 role, address account) public view returns (bool)'
   ]);
@@ -125,4 +125,22 @@ export const updateMerkleRoot = async (
   );
 
   return contract.cronJobRoot(root);
+};
+
+export const getMinimumPrice = async (): Promise<BigNumber> => {
+  const abi = new ethers.utils.Interface([
+    'function minimumPrice() public view returns (uint256)'
+  ]);
+
+  const contract = new ethers.Contract(
+    CONFIG.POIGNART_CONTRACT,
+    abi,
+    CONFIG.CRON_WALLET
+  );
+
+  try {
+    return contract.minimumPrice();
+  } catch {
+    return BigNumber.from(0);
+  }
 };
