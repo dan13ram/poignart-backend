@@ -4,7 +4,7 @@ import { utils } from 'ethers';
 import { Artist } from '@/models/artist';
 import { Voucher, VoucherDocument } from '@/models/voucher';
 import { CONFIG } from '@/utils/config';
-import { verifyOwnership } from '@/utils/contract';
+import { getMinimumPrice, verifyOwnership } from '@/utils/contract';
 import { getTypedDataOptions } from '@/utils/helpers';
 import { getSnapshot } from '@/utils/snapshot';
 import { VoucherInterface } from '@/utils/types';
@@ -20,10 +20,11 @@ export const createVoucher = async (
   artistAddress: string,
   record: VoucherInterface & { metadata?: Record<string, unknown> }
 ): Promise<VoucherDocument> => {
-  const [nextTokenID, snapshot, artist] = await Promise.all([
+  const [nextTokenID, snapshot, artist, minimumPrice] = await Promise.all([
     getNextTokenID(),
     getSnapshot(),
-    Artist.findOne({ ethAddress: artistAddress })
+    Artist.findOne({ ethAddress: artistAddress }),
+    getMinimumPrice()
   ]);
   if (Number(record.tokenID) !== nextTokenID) {
     const e = new Error(
@@ -43,6 +44,15 @@ export const createVoucher = async (
   if (!artist) {
     const e = new Error(
       'Voucher validation failed: createdBy: Artist does not exist'
+    );
+    e.name = 'ValidationError';
+    throw e;
+  }
+  if (minimumPrice.gt(record.minPrice ?? 0)) {
+    const e = new Error(
+      `Voucher validation failed: minPrice: Must be greater than or equal to ${utils.formatEther(
+        minimumPrice
+      )}`
     );
     e.name = 'ValidationError';
     throw e;
