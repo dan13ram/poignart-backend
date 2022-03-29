@@ -54,7 +54,7 @@ export const resolvers = {
       }
       const snapshot = await getSnapshot();
       response.metadata = JSON.parse(response.metadataString);
-      response.createdBy.artistProof = snapshot.getMerkleProof(
+      response.createdBy.merkleProof = snapshot.getMerkleProof(
         response.createdBy.ethAddress
       );
       return response;
