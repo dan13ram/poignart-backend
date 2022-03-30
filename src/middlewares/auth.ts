@@ -29,16 +29,22 @@ export const verifyToken = (req: Request): null | string => {
   }
 };
 
+const UNAUTHENTICATED_URLS = ['/api/status'];
+
 export const validateRequest = (
   req: Request,
   res: Response,
   next: NextFunction
 ): void => {
-  const signer = verifyToken(req);
-  if (!signer || signer === constants.AddressZero) {
-    res.status(401).json({ error: 'Unauthorized' });
-  } else {
-    (req as AuthRequest).signer = signer;
+  if (UNAUTHENTICATED_URLS.includes(req.originalUrl)) {
     next();
+  } else {
+    const signer = verifyToken(req);
+    if (!signer || signer === constants.AddressZero) {
+      res.status(401).json({ error: 'Unauthorized' });
+    } else {
+      (req as AuthRequest).signer = signer;
+      next();
+    }
   }
 };
