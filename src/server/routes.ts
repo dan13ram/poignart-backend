@@ -4,6 +4,7 @@ import { createArtist, verifyArtist } from '@/controllers/artist';
 import { createVoucher, redeemVoucher } from '@/controllers/voucher';
 import { createWhitelist } from '@/controllers/whitelist';
 import { AuthRequest } from '@/middlewares/auth';
+import { getNextDates } from '@/utils/crons';
 import { handleMongoError } from '@/utils/helpers';
 
 const ROUTES = express.Router();
@@ -82,7 +83,7 @@ ROUTES.post('/whitelist', async (req: Request, res: Response) => {
       return;
     }
     const response = await createWhitelist(address, req.body.ethAddress);
-    res.status(201).json({ response });
+    res.status(201).json({ response: { ...response, status: getNextDates() } });
   } catch (err) {
     console.error(
       'Error whitelisting address:',
@@ -90,6 +91,10 @@ ROUTES.post('/whitelist', async (req: Request, res: Response) => {
     );
     handleMongoError(res, err);
   }
+});
+
+ROUTES.get('/status', async (_req: Request, res: Response) => {
+  res.status(200).json({ response: { ...getNextDates() } });
 });
 
 export { ROUTES };
