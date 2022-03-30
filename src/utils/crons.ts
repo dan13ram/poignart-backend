@@ -1,4 +1,4 @@
-import cron from 'node-cron';
+import { CronJob } from 'cron';
 
 import { getSnapshot } from '@/utils/snapshot';
 
@@ -16,7 +16,22 @@ const merkleRootCron = async () => {
   }
 };
 
+const merkleRootJob = new CronJob(
+  '0 0 * * *',
+  merkleRootCron,
+  null,
+  false,
+  'UTC'
+);
+
+export const getNextDates = () => ({
+  lastDate: merkleRootJob.lastDate()?.toUTCString(),
+  lastDateEpoch: merkleRootJob.lastDate()?.getTime(),
+  nextDate: new Date(merkleRootJob.nextDates().unix() * 1000).toUTCString(),
+  nextDateEpoch: merkleRootJob.nextDates().unix() * 1000
+});
+
 export const scheduleCrons = async () => {
   await merkleRootCron();
-  cron.schedule('0 0 * * *', merkleRootCron);
+  merkleRootJob.start();
 };
