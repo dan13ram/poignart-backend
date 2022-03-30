@@ -1,7 +1,11 @@
 import express, { Request, Response } from 'express';
 
-import { createArtist, verifyArtist } from '@/controllers/artist';
-import { createVoucher, redeemVoucher } from '@/controllers/voucher';
+import { createArtist, updateArtist, verifyArtist } from '@/controllers/artist';
+import {
+  createVoucher,
+  redeemVoucher,
+  updateVoucher
+} from '@/controllers/voucher';
 import { createWhitelist } from '@/controllers/whitelist';
 import { AuthRequest } from '@/middlewares/auth';
 import { getNextDates } from '@/utils/crons';
@@ -42,6 +46,17 @@ ROUTES.post('/artist', async (req: Request, res: Response) => {
   }
 });
 
+ROUTES.patch('/artist/update', async (req: Request, res: Response) => {
+  try {
+    const address = (req as AuthRequest).signer;
+    const response = await updateArtist(address, req.body);
+    res.status(201).json({ response });
+  } catch (err) {
+    console.error('Error updating artist:', (err as Error)?.message ?? err);
+    handleMongoError(res, err);
+  }
+});
+
 ROUTES.post('/voucher', async (req: Request, res: Response) => {
   try {
     const address = (req as AuthRequest).signer;
@@ -49,6 +64,17 @@ ROUTES.post('/voucher', async (req: Request, res: Response) => {
     res.status(201).json({ response });
   } catch (err) {
     console.error('Error creating voucher:', (err as Error)?.message ?? err);
+    handleMongoError(res, err);
+  }
+});
+
+ROUTES.patch('/voucher/update', async (req: Request, res: Response) => {
+  try {
+    const address = (req as AuthRequest).signer;
+    const response = await updateVoucher(address, req.body);
+    res.status(201).json({ response });
+  } catch (err) {
+    console.error('Error updating voucher:', (err as Error)?.message ?? err);
     handleMongoError(res, err);
   }
 });

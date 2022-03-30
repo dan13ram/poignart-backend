@@ -63,7 +63,7 @@ export const createArtist = async (
   const verified = snapshot.verifyAddress(artistAddress);
   if (!verified || artistAddress !== record.ethAddress?.toLowerCase()) {
     const e = new Error(
-      `Artist validation failed: not whilelisted or invalid ethAddress`
+      `Artist validation failed: Not whilelisted or invalid ethAddress`
     );
     e.name = 'ValidationError';
     throw e;
@@ -72,4 +72,36 @@ export const createArtist = async (
   record.ethAddress = artistAddress;
   const artist = await Artist.create(record);
   return artist;
+};
+
+export const updateArtist = async (
+  artistAddress: string,
+  record: ArtistInterface
+): Promise<ArtistInterface> => {
+  const [snapshot, artist] = await Promise.all([
+    getSnapshot(),
+    Artist.findOne({
+      ethAddress: artistAddress
+    })
+  ]);
+  const verified = snapshot.verifyAddress(artistAddress);
+  if (!verified || artistAddress !== artist?.ethAddress?.toLowerCase()) {
+    const e = new Error(
+      `Artist validation failed: ethAddress: Not whilelisted or not found`
+    );
+    e.name = 'ValidationError';
+    throw e;
+  }
+  record.createdVouchers = artist.createdVouchers;
+  record.ethAddress = artistAddress;
+  const updatedArtist = await Artist.findOneAndUpdate(
+    { ethAddress: artistAddress },
+    { $set: record }
+  );
+  if (!updatedArtist) {
+    const e = new Error(`Artist validation failed: ethAddress: Not found`);
+    e.name = 'ValidationError';
+    throw e;
+  }
+  return updatedArtist;
 };
