@@ -24,9 +24,15 @@ const merkleRootJob = new CronJob(
   'UTC'
 );
 
+const deploymentTime = new Date();
+
 export const getNextDates = () => ({
-  lastDate: merkleRootJob.lastDate()?.toUTCString(),
-  lastDateEpoch: merkleRootJob.lastDate()?.getTime(),
+  lastDate: merkleRootJob.lastDate()
+    ? merkleRootJob.lastDate().toUTCString()
+    : deploymentTime.toUTCString(),
+  lastDateEpoch: merkleRootJob.lastDate()
+    ? merkleRootJob.lastDate().getTime()
+    : deploymentTime.getTime(),
   nextDate: new Date(merkleRootJob.nextDates().unix() * 1000).toUTCString(),
   nextDateEpoch: merkleRootJob.nextDates().unix() * 1000
 });
