@@ -34,6 +34,25 @@ const getCronRole = async (): Promise<string> => {
   return CRON_ROLE;
 };
 
+export const checkMintStatus = async (tokenID: number): Promise<boolean> => {
+  const abi = new ethers.utils.Interface([
+    'function ownerOf(uint256 tokenId) public view returns (address)'
+  ]);
+
+  const contract = new ethers.Contract(
+    CONFIG.POIGNART_CONTRACT,
+    abi,
+    CONFIG.CRON_WALLET
+  );
+
+  try {
+    await contract.ownerOf(tokenID); // ownerOf will revert if token is not minted
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
 export const verifyOwnership = async (
   minterAddress: string,
   tokenID: number

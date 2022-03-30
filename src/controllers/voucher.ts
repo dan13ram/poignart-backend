@@ -4,7 +4,11 @@ import { utils } from 'ethers';
 import { Artist } from '@/models/artist';
 import { Voucher, VoucherDocument } from '@/models/voucher';
 import { CONFIG } from '@/utils/config';
-import { getMinimumPrice, verifyOwnership } from '@/utils/contract';
+import {
+  checkMintStatus,
+  getMinimumPrice,
+  verifyOwnership
+} from '@/utils/contract';
 import { getTypedDataOptions } from '@/utils/helpers';
 import { getSnapshot } from '@/utils/snapshot';
 import { VoucherInterface } from '@/utils/types';
@@ -160,15 +164,23 @@ export const updateVoucher = async (
   artistAddress: string,
   record: VoucherInterface & { metadata?: Record<string, unknown> }
 ): Promise<VoucherDocument> => {
-  const [snapshot, artist, voucher, minimumPrice] = await Promise.all([
+  const [snapshot, artist, voucher, minimumPrice, minted] = await Promise.all([
     getSnapshot(),
     Artist.findOne({ ethAddress: artistAddress }),
     Voucher.findOne({ tokenID: record.tokenID }),
-    getMinimumPrice()
+    getMinimumPrice(),
+    checkMintStatus(record.tokenID)
   ]);
   if (!voucher || Number(record.tokenID) !== voucher.tokenID) {
     const e = new Error(
       `Voucher validation failed: tokenID: Voucher not found`
+    );
+    e.name = 'ValidationError';
+    throw e;
+  }
+  if (minted) {
+    const e = new Error(
+      `Voucher validation failed: tokenID: Token already minted`
     );
     e.name = 'ValidationError';
     throw e;
