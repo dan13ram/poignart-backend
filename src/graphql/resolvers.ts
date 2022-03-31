@@ -65,7 +65,7 @@ export const resolvers = {
       { where }: QueryVouchersArgs
     ): Promise<VoucherType[]> {
       const shouldApplyMinterFilter =
-        !!where?.minted && [true, false].includes(where.minted);
+        where?.minted === false || where?.minted === true;
       const shouldApplyTypeFilter = !!where?.contentType;
 
       let vouchers: LeanVoucherDocument[];
