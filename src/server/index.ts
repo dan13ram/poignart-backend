@@ -11,6 +11,7 @@ import { resolvers } from '@/graphql/resolvers';
 import { typeDefs } from '@/graphql/typedefs';
 import { validateRequest, verifyToken } from '@/middlewares/auth';
 import { ROUTES } from '@/server/routes';
+import { CONFIG } from '@/utils/config';
 
 export const createServer = async (): Promise<Application> => {
   const app = express();
@@ -22,11 +23,10 @@ export const createServer = async (): Promise<Application> => {
     typeDefs,
     resolvers,
     context: ({ req }) => {
-      if (process.env.NODE_ENV !== 'development' && !verifyToken(req))
-        throw Error('Unauthorized');
+      if (CONFIG.IS_PROD && !verifyToken(req)) throw Error('Unauthorized');
     },
     plugins: [
-      process.env.NODE_ENV !== 'development'
+      CONFIG.IS_PROD
         ? ApolloServerPluginLandingPageProductionDefault({ footer: false })
         : ApolloServerPluginLandingPageGraphQLPlayground()
     ]

@@ -4,6 +4,7 @@ import { providers, utils, Wallet } from 'ethers';
 dotenv.config();
 
 type ConfigType = {
+  IS_PROD: boolean;
   MONGODB_URI: string;
   PORT: number;
   JWT_SECRET: string;
@@ -12,9 +13,11 @@ type ConfigType = {
   CHAIN_ID: number;
   MAX_VOUCHERS: number;
   RATE_LIMIT_DURATION: number;
+  WHITELIST_ADMINS: string[];
 };
 
 export const CONFIG: ConfigType = {
+  IS_PROD: true,
   MONGODB_URI: '',
   PORT: 5000,
   JWT_SECRET: '',
@@ -22,11 +25,13 @@ export const CONFIG: ConfigType = {
   CRON_WALLET: Wallet.createRandom(),
   CHAIN_ID: 0,
   MAX_VOUCHERS: 10,
-  RATE_LIMIT_DURATION: 60 * 60 * 1000 // 10 per hr
+  RATE_LIMIT_DURATION: 60 * 60 * 1000, // 10 per hr
+  WHITELIST_ADMINS: []
 };
 
 export const initConfig = () => {
   const {
+    NODE_ENV,
     MONGODB_URI,
     PORT,
     JWT_SECRET,
@@ -35,7 +40,8 @@ export const initConfig = () => {
     RPC_URL,
     CHAIN_ID,
     MAX_VOUCHERS,
-    RATE_LIMIT_DURATION
+    RATE_LIMIT_DURATION,
+    WHITELIST_ADMINS = ''
   } = process.env;
   if (
     !MONGODB_URI ||
@@ -54,6 +60,7 @@ export const initConfig = () => {
     throw new Error('Invalid ENV variables');
   }
 
+  CONFIG.IS_PROD = NODE_ENV !== 'development';
   CONFIG.MONGODB_URI = MONGODB_URI;
   CONFIG.PORT = PORT ? Number(PORT) : 5000;
   CONFIG.JWT_SECRET = JWT_SECRET;
@@ -65,4 +72,7 @@ export const initConfig = () => {
   CONFIG.CHAIN_ID = Number(CHAIN_ID);
   CONFIG.MAX_VOUCHERS = Number(MAX_VOUCHERS);
   CONFIG.RATE_LIMIT_DURATION = Number(RATE_LIMIT_DURATION);
+  CONFIG.WHITELIST_ADMINS = WHITELIST_ADMINS.split(' ')
+    .map(a => a.trim().toLowerCase())
+    .filter(a => !!a && utils.isAddress(a));
 };
