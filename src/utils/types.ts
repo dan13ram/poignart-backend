@@ -1,16 +1,20 @@
 import { Types } from 'mongoose';
 
+import { Maybe } from '@/graphql/types';
+
 export interface ArtistInterface {
   name: string;
   bio: string;
   ethAddress: string;
   discordHandle: string;
-  telegramHandle?: string;
-  twitterHandle?: string;
-  instagramHandle?: string;
-  emailAddress?: string;
-  website?: string;
+  telegramHandle?: Maybe<string>;
+  twitterHandle?: Maybe<string>;
+  instagramHandle?: Maybe<string>;
+  emailAddress?: Maybe<string>;
+  website?: Maybe<string>;
   createdVouchers: Types.ObjectId[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface VoucherInterface {
@@ -20,12 +24,16 @@ export interface VoucherInterface {
   createdBy: Types.ObjectId;
   signature: string;
   minted: boolean;
-  mintedBy?: string;
+  mintedBy?: Maybe<string>;
   metadataString: string;
   contentType: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface WhitelistInterface {
   ethAddress: string;
   createdBy: string;
+  createdAt: Date;
+  updatedAt: Date;
 }

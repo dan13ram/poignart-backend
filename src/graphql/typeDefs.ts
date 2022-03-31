@@ -18,6 +18,7 @@ export const typeDefs = gql`
     createdAt: String!
     updatedAt: String!
     merkleProof: [String!]!
+    isWhitelistAdmin: Boolean!
   }
 
   type Voucher {
@@ -25,7 +26,7 @@ export const typeDefs = gql`
     tokenID: Int!
     tokenURI: String!
     minPrice: String!
-    createdBy: Artist!
+    createdBy: Artist
     signature: String!
     createdAt: String!
     updatedAt: String!
@@ -49,12 +50,12 @@ export const typeDefs = gql`
   }
 
   input ArtistFilter {
-    _id: String
+    _id: ID
     ethAddress: String
   }
 
   input VoucherFilter {
-    _id: String
+    _id: ID
     tokenID: Int
   }
 `;

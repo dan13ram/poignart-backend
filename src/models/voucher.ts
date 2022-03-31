@@ -1,8 +1,10 @@
-import { Document, model, Schema } from 'mongoose';
+import { Document, LeanDocument, model, Schema } from 'mongoose';
 
 import { VoucherInterface } from '@/utils/types';
 
 export interface VoucherDocument extends VoucherInterface, Document {}
+
+export type LeanVoucherDocument = LeanDocument<VoucherDocument>;
 
 const VoucherSchema = new Schema<VoucherDocument>(
   {
@@ -48,4 +50,4 @@ const VoucherSchema = new Schema<VoucherDocument>(
   { timestamps: true }
 );
 
-export const Voucher = model<VoucherDocument>('Voucher', VoucherSchema);
+export const VoucherModel = model<VoucherDocument>('Voucher', VoucherSchema);
