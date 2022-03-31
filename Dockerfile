@@ -3,6 +3,7 @@ WORKDIR /usr/src/app
 
 COPY yarn.lock .
 COPY tsconfig.json .
+COPY codegen.yml .
 COPY package.json .
 COPY src ./src
 
