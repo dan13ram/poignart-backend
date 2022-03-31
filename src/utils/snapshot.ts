@@ -4,7 +4,7 @@ import keccak256 from 'keccak256';
 import MerkleTree from 'merkletreejs';
 import path from 'path';
 
-import { Whitelist } from '@/models/whitelist';
+import { WhitelistModel } from '@/models/whitelist';
 import { getMerkleRoot, updateMerkleRoot } from '@/utils/contract';
 
 const unique = (a: Array<string>): Array<string> => {
@@ -82,7 +82,7 @@ export const getSnapshot = async (rebuild = false): Promise<Snapshot> => {
   const data = await fs.readFile(whitelistFile);
 
   const addedAddresses: string[] = [];
-  const added = await Whitelist.find();
+  const added = await WhitelistModel.find();
   added.forEach(a => addedAddresses.push(a.ethAddress));
 
   const addresses = data

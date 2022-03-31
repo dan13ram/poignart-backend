@@ -1,8 +1,10 @@
-import { Document, model, Schema } from 'mongoose';
+import { Document, LeanDocument, model, Schema } from 'mongoose';
 
 import { WhitelistInterface } from '@/utils/types';
 
 export interface WhitelistDocument extends WhitelistInterface, Document {}
+
+export type LeanWhitelistDocument = LeanDocument<WhitelistDocument>;
 
 const WhitelistSchema = new Schema<WhitelistDocument>(
   {
@@ -20,4 +22,7 @@ const WhitelistSchema = new Schema<WhitelistDocument>(
   { timestamps: true }
 );
 
-export const Whitelist = model<WhitelistDocument>('Whitelist', WhitelistSchema);
+export const WhitelistModel = model<WhitelistDocument>(
+  'Whitelist',
+  WhitelistSchema
+);

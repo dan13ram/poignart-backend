@@ -2,8 +2,12 @@
 import { utils } from 'ethers';
 
 import { getNextTokenID } from '@/controllers/voucher';
-import { Artist, ArtistDocument } from '@/models/artist';
-import { Voucher } from '@/models/voucher';
+import {
+  ArtistDocument,
+  ArtistModel,
+  LeanArtistDocument
+} from '@/models/artist';
+import { VoucherModel } from '@/models/voucher';
 import { CONFIG } from '@/utils/config';
 import { getSnapshot } from '@/utils/snapshot';
 import { ArtistInterface } from '@/utils/types';
@@ -13,7 +17,7 @@ export const verifyArtist = async (
 ): Promise<{
   verified: boolean;
   proof: string[];
-  artist: ArtistDocument | null;
+  artist: LeanArtistDocument | null;
   nextTokenID: number;
   rateLimited: boolean;
 }> => {
@@ -27,19 +31,21 @@ export const verifyArtist = async (
 
   const [snapshot, artist, nextTokenID] = await Promise.all([
     getSnapshot(),
-    Artist.findOne({
+    ArtistModel.findOne({
       ethAddress: artistAddress
-    }).populate('createdVouchers'),
+    })
+      .lean()
+      .populate('createdVouchers'),
     getNextTokenID()
   ]);
 
   let rateLimited = false;
 
   if (artist) {
-    const lastTimeVouchers = await Voucher.find({
+    const lastTimeVouchers = await VoucherModel.find({
       createdBy: artist._id, // eslint-disable-line no-underscore-dangle
       createdAt: { $gt: lastTime }
-    });
+    }).lean();
 
     rateLimited = lastTimeVouchers.length >= CONFIG.MAX_VOUCHERS;
   }
@@ -58,7 +64,7 @@ export const verifyArtist = async (
 export const createArtist = async (
   artistAddress: string,
   record: ArtistInterface
-): Promise<ArtistInterface> => {
+): Promise<ArtistDocument> => {
   const snapshot = await getSnapshot();
   const verified = snapshot.verifyAddress(artistAddress);
   if (!verified || artistAddress !== record.ethAddress?.toLowerCase()) {
@@ -70,17 +76,17 @@ export const createArtist = async (
   }
   record.createdVouchers = [];
   record.ethAddress = artistAddress;
-  const artist = await Artist.create(record);
+  const artist = await ArtistModel.create(record);
   return artist;
 };
 
 export const updateArtist = async (
   artistAddress: string,
   record: ArtistInterface
-): Promise<ArtistInterface> => {
+): Promise<LeanArtistDocument> => {
   const [snapshot, artist] = await Promise.all([
     getSnapshot(),
-    Artist.findOne({
+    ArtistModel.findOne({
       ethAddress: artistAddress
     })
   ]);
@@ -94,10 +100,10 @@ export const updateArtist = async (
   }
   record.createdVouchers = artist.createdVouchers;
   record.ethAddress = artistAddress;
-  const updatedArtist = await Artist.findOneAndUpdate(
+  const updatedArtist = await ArtistModel.findOneAndUpdate(
     { ethAddress: artistAddress },
     { $set: record }
-  );
+  ).lean();
   if (!updatedArtist) {
     const e = new Error(`Artist validation failed: ethAddress: Not found`);
     e.name = 'ValidationError';

@@ -33,3 +33,4 @@ yarn-error.log*
 
 .vscode
 *.sw[a-z]
+src/graphql/types.ts

@@ -1,8 +1,12 @@
 /* eslint-disable no-underscore-dangle, no-param-reassign */
 import { utils } from 'ethers';
 
-import { Artist } from '@/models/artist';
-import { Voucher, VoucherDocument } from '@/models/voucher';
+import { ArtistModel } from '@/models/artist';
+import {
+  LeanVoucherDocument,
+  VoucherDocument,
+  VoucherModel
+} from '@/models/voucher';
 import { CONFIG } from '@/utils/config';
 import {
   checkMintStatus,
@@ -14,7 +18,7 @@ import { getSnapshot } from '@/utils/snapshot';
 import { VoucherInterface } from '@/utils/types';
 
 export const getNextTokenID = async () => {
-  const vouchers: VoucherDocument[] = await Voucher.find()
+  const vouchers: VoucherDocument[] = await VoucherModel.find()
     .sort({ _id: -1 })
     .limit(1);
   return vouchers && vouchers.length === 1 ? vouchers[0].tokenID + 1 : 1;
@@ -27,7 +31,7 @@ export const createVoucher = async (
   const [nextTokenID, snapshot, artist, minimumPrice] = await Promise.all([
     getNextTokenID(),
     getSnapshot(),
-    Artist.findOne({ ethAddress: artistAddress }),
+    ArtistModel.findOne({ ethAddress: artistAddress }),
     getMinimumPrice()
   ]);
   if (Number(record.tokenID) !== nextTokenID) {
@@ -65,10 +69,10 @@ export const createVoucher = async (
   const lastTime = new Date();
   lastTime.setTime(lastTime.getTime() - CONFIG.RATE_LIMIT_DURATION);
 
-  const lastTimeVouchers = await Voucher.find({
+  const lastTimeVouchers = await VoucherModel.find({
     createdBy: artist._id,
     createdAt: { $gt: lastTime }
-  });
+  }).lean();
 
   if (lastTimeVouchers.length >= CONFIG.MAX_VOUCHERS) {
     const e = new Error('Voucher validation failed: Too many vouchers');
@@ -117,7 +121,7 @@ export const createVoucher = async (
     throw e;
   }
 
-  const voucher: VoucherDocument = await Voucher.create(record);
+  const voucher: VoucherDocument = await VoucherModel.create(record);
   artist.createdVouchers.push(voucher._id);
   artist.save();
   return voucher;
@@ -133,7 +137,7 @@ export const redeemVoucher = async (
     throw e;
   }
   const [voucher, isOwner] = await Promise.all([
-    Voucher.findOne({
+    VoucherModel.findOne({
       tokenID,
       minted: false
     }),
@@ -163,11 +167,11 @@ export const redeemVoucher = async (
 export const updateVoucher = async (
   artistAddress: string,
   record: VoucherInterface & { metadata?: Record<string, unknown> }
-): Promise<VoucherDocument> => {
+): Promise<LeanVoucherDocument> => {
   const [snapshot, artist, voucher, minimumPrice, minted] = await Promise.all([
     getSnapshot(),
-    Artist.findOne({ ethAddress: artistAddress }),
-    Voucher.findOne({ tokenID: record.tokenID }),
+    ArtistModel.findOne({ ethAddress: artistAddress }).lean(),
+    VoucherModel.findOne({ tokenID: record.tokenID }),
     getMinimumPrice(),
     checkMintStatus(record.tokenID)
   ]);
@@ -244,10 +248,10 @@ export const updateVoucher = async (
     throw e;
   }
 
-  const updatedVoucher = await Voucher.findOneAndUpdate(
+  const updatedVoucher = await VoucherModel.findOneAndUpdate(
     { tokenID: record.tokenID },
     { $set: record }
-  );
+  ).lean();
   if (!updatedVoucher) {
     const e = new Error(`Voucher validation failed: tokenID: not found`);
     e.name = 'ValidationError';

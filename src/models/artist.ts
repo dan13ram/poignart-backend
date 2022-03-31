@@ -1,8 +1,10 @@
-import { Document, model, Schema } from 'mongoose';
+import { Document, LeanDocument, model, Schema } from 'mongoose';
 
 import { ArtistInterface } from '@/utils/types';
 
 export interface ArtistDocument extends ArtistInterface, Document {}
+
+export type LeanArtistDocument = LeanDocument<ArtistDocument>;
 
 const ArtistSchema = new Schema<ArtistDocument>(
   {
@@ -55,4 +57,4 @@ const ArtistSchema = new Schema<ArtistDocument>(
   { timestamps: true }
 );
 
-export const Artist = model<ArtistDocument>('Artist', ArtistSchema);
+export const ArtistModel = model<ArtistDocument>('Artist', ArtistSchema);

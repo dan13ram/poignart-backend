@@ -8,7 +8,7 @@ import express, { Application, Request, Response } from 'express';
 import morgan from 'morgan';
 
 import { resolvers } from '@/graphql/resolvers';
-import { typeDefs } from '@/graphql/typedefs';
+import { typeDefs } from '@/graphql/typeDefs';
 import { validateRequest, verifyToken } from '@/middlewares/auth';
 import { ROUTES } from '@/server/routes';
 import { CONFIG } from '@/utils/config';
