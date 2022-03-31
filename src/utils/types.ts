@@ -13,8 +13,8 @@ export interface ArtistInterface {
   emailAddress?: Maybe<string>;
   website?: Maybe<string>;
   createdVouchers: Types.ObjectId[];
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface VoucherInterface {
@@ -27,13 +27,13 @@ export interface VoucherInterface {
   mintedBy?: Maybe<string>;
   metadataString: string;
   contentType: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface WhitelistInterface {
   ethAddress: string;
   createdBy: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }

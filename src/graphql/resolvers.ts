@@ -26,6 +26,8 @@ export const resolvers = {
       const snapshot = await getSnapshot();
       const response: ArtistType = {
         ...artist,
+        createdAt: artist.createdAt.getTime().toString(),
+        updatedAt: artist.updatedAt.getTime().toString(),
         _id: artist._id.toString(),
         merkleProof: snapshot.getMerkleProof(artist.ethAddress),
         isWhitelistAdmin: CONFIG.WHITELIST_ADMINS.includes(artist.ethAddress),
@@ -42,10 +44,12 @@ export const resolvers = {
       if (!r) return [];
 
       const createdVouchers =
-        artist.createdVouchers as unknown as LeanVoucherDocument[];
+        r.createdVouchers as unknown as LeanVoucherDocument[];
       const response = createdVouchers.map(v => {
         const voucher: VoucherType = {
           ...v,
+          createdAt: v.createdAt.getTime().toString(),
+          updatedAt: v.updatedAt.getTime().toString(),
           _id: v._id.toString(),
           metadata: JSON.parse(v.metadataString),
           createdBy: null
@@ -93,9 +97,13 @@ export const resolvers = {
           ...r,
           _id: r._id.toString(),
           metadata: JSON.parse(r.metadataString),
+          createdAt: r.createdAt.getTime().toString(),
+          updatedAt: r.updatedAt.getTime().toString(),
           createdBy: {
             ...artist,
             _id: artist._id.toString(),
+            createdAt: artist.createdAt.getTime().toString(),
+            updatedAt: artist.updatedAt.getTime().toString(),
             merkleProof: snapshot.getMerkleProof(artist.ethAddress),
             isWhitelistAdmin: CONFIG.WHITELIST_ADMINS.includes(
               artist.ethAddress
@@ -137,9 +145,13 @@ export const resolvers = {
         ...voucher,
         _id: voucher._id.toString(),
         metadata: JSON.parse(voucher.metadataString),
+        createdAt: voucher.createdAt.getTime().toString(),
+        updatedAt: voucher.updatedAt.getTime().toString(),
         createdBy: {
           ...artist,
           _id: artist._id.toString(),
+          createdAt: artist.createdAt.getTime().toString(),
+          updatedAt: artist.updatedAt.getTime().toString(),
           merkleProof: snapshot.getMerkleProof(artist.ethAddress),
           isWhitelistAdmin: CONFIG.WHITELIST_ADMINS.includes(artist.ethAddress),
           createdVouchers: []
@@ -160,10 +172,14 @@ export const resolvers = {
           ...a,
           _id: a._id.toString(),
           merkleProof: snapshot.getMerkleProof(a.ethAddress),
+          createdAt: a.createdAt.getTime().toString(),
+          updatedAt: a.updatedAt.getTime().toString(),
           createdVouchers: createdVouchers.map(v => {
             const voucher: VoucherType = {
               ...v,
               _id: v._id.toString(),
+              createdAt: v.createdAt.getTime().toString(),
+              updatedAt: v.updatedAt.getTime().toString(),
               metadata: JSON.parse(v.metadataString),
               createdBy: null
             };
@@ -205,11 +221,15 @@ export const resolvers = {
       const response: ArtistType = {
         ...artist,
         _id: artist._id.toString(),
+        createdAt: artist.createdAt.getTime().toString(),
+        updatedAt: artist.updatedAt.getTime().toString(),
         merkleProof: snapshot.getMerkleProof(artist.ethAddress),
         createdVouchers: createdVouchers.map(v => {
           const voucher: VoucherType = {
             ...v,
             _id: v._id.toString(),
+            createdAt: v.createdAt.getTime().toString(),
+            updatedAt: v.updatedAt.getTime().toString(),
             metadata: JSON.parse(v.metadataString),
             createdBy: null
           };
