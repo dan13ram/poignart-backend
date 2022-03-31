@@ -70,46 +70,27 @@ export const resolvers = {
 
       let vouchers: LeanVoucherDocument[];
       if (shouldApplyMinterFilter && !shouldApplyTypeFilter) {
-        vouchers = await VoucherModel.find({ minted: where.minted })
-          .lean()
-          .populate('createdBy');
+        vouchers = await VoucherModel.find({ minted: where.minted }).lean();
       } else if (shouldApplyTypeFilter && !shouldApplyMinterFilter) {
         vouchers = await VoucherModel.find({
           contentType: where.contentType
-        })
-          .lean()
-          .populate('createdBy');
+        }).lean();
       } else if (shouldApplyMinterFilter && shouldApplyTypeFilter) {
         vouchers = await VoucherModel.find({
           minted: where.minted,
           contentType: where.contentType
-        })
-          .lean()
-          .populate('createdBy');
+        }).lean();
       } else {
-        vouchers = await VoucherModel.find().lean().populate('createdBy');
+        vouchers = await VoucherModel.find().lean();
       }
-      const snapshot = await getSnapshot();
       const response: VoucherType[] = vouchers.map(r => {
-        const artist: LeanArtistDocument =
-          r.createdBy as unknown as LeanArtistDocument;
         const voucher: VoucherType = {
           ...r,
           _id: r._id.toString(),
           metadata: JSON.parse(r.metadataString),
           createdAt: r.createdAt.getTime().toString(),
           updatedAt: r.updatedAt.getTime().toString(),
-          createdBy: {
-            ...artist,
-            _id: artist._id.toString(),
-            createdAt: artist.createdAt.getTime().toString(),
-            updatedAt: artist.updatedAt.getTime().toString(),
-            merkleProof: snapshot.getMerkleProof(artist.ethAddress),
-            isWhitelistAdmin: CONFIG.WHITELIST_ADMINS.includes(
-              artist.ethAddress
-            ),
-            createdVouchers: []
-          }
+          createdBy: null // will be populated in Artist resolver
         };
         return voucher;
       });
@@ -125,66 +106,36 @@ export const resolvers = {
       let voucher: LeanVoucherDocument | null = null;
 
       if (shouldApplyIdFilter) {
-        voucher = await VoucherModel.findById(where._id)
-          .lean()
-          .populate('createdBy');
+        voucher = await VoucherModel.findById(where._id).lean();
       } else if (shouldApplyVoucherIdFilter) {
         voucher = await VoucherModel.findOne({
           tokenID: where.tokenID
-        })
-          .lean()
-          .populate('createdBy');
+        }).lean();
       }
       if (!voucher) return null;
 
-      const snapshot = await getSnapshot();
-
-      const artist: LeanArtistDocument =
-        voucher.createdBy as unknown as LeanArtistDocument;
       const response: VoucherType = {
         ...voucher,
         _id: voucher._id.toString(),
         metadata: JSON.parse(voucher.metadataString),
         createdAt: voucher.createdAt.getTime().toString(),
         updatedAt: voucher.updatedAt.getTime().toString(),
-        createdBy: {
-          ...artist,
-          _id: artist._id.toString(),
-          createdAt: artist.createdAt.getTime().toString(),
-          updatedAt: artist.updatedAt.getTime().toString(),
-          merkleProof: snapshot.getMerkleProof(artist.ethAddress),
-          isWhitelistAdmin: CONFIG.WHITELIST_ADMINS.includes(artist.ethAddress),
-          createdVouchers: []
-        }
+        createdBy: null // will be populated in Artist resolver
       };
       return response;
     },
 
     async artists(): Promise<ArtistType[]> {
-      const artists: LeanArtistDocument[] = await ArtistModel.find()
-        .lean()
-        .populate('createdVouchers');
+      const artists: LeanArtistDocument[] = await ArtistModel.find().lean();
       const snapshot = await getSnapshot();
       const response: ArtistType[] = artists.map(a => {
-        const createdVouchers =
-          a.createdVouchers as unknown as LeanVoucherDocument[];
         const artist: ArtistType = {
           ...a,
           _id: a._id.toString(),
           merkleProof: snapshot.getMerkleProof(a.ethAddress),
           createdAt: a.createdAt.getTime().toString(),
           updatedAt: a.updatedAt.getTime().toString(),
-          createdVouchers: createdVouchers.map(v => {
-            const voucher: VoucherType = {
-              ...v,
-              _id: v._id.toString(),
-              createdAt: v.createdAt.getTime().toString(),
-              updatedAt: v.updatedAt.getTime().toString(),
-              metadata: JSON.parse(v.metadataString),
-              createdBy: null
-            };
-            return voucher;
-          }),
+          createdVouchers: null, // will be populated in Voucher resolver
           isWhitelistAdmin: CONFIG.WHITELIST_ADMINS.includes(a.ethAddress)
         };
         return artist;
@@ -203,38 +154,22 @@ export const resolvers = {
       let artist: LeanArtistDocument | null = null;
 
       if (shouldApplyIdFilter) {
-        artist = await ArtistModel.findById(where._id)
-          .lean()
-          .populate('createdVouchers');
+        artist = await ArtistModel.findById(where._id).lean();
       } else if (shouldApplyEthFilter) {
         artist = await ArtistModel.findOne({
           ethAddress: { $regex: where.ethAddress, $options: 'i' }
-        })
-          .lean()
-          .populate('createdVouchers');
+        }).lean();
       }
       if (!artist) return null;
       const snapshot = await getSnapshot();
 
-      const createdVouchers =
-        artist.createdVouchers as unknown as LeanVoucherDocument[];
       const response: ArtistType = {
         ...artist,
         _id: artist._id.toString(),
         createdAt: artist.createdAt.getTime().toString(),
         updatedAt: artist.updatedAt.getTime().toString(),
         merkleProof: snapshot.getMerkleProof(artist.ethAddress),
-        createdVouchers: createdVouchers.map(v => {
-          const voucher: VoucherType = {
-            ...v,
-            _id: v._id.toString(),
-            createdAt: v.createdAt.getTime().toString(),
-            updatedAt: v.updatedAt.getTime().toString(),
-            metadata: JSON.parse(v.metadataString),
-            createdBy: null
-          };
-          return voucher;
-        }),
+        createdVouchers: null, // will be populated in Voucher resolver
         isWhitelistAdmin: CONFIG.WHITELIST_ADMINS.includes(artist.ethAddress)
       };
 
