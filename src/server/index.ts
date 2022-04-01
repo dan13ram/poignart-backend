@@ -23,7 +23,8 @@ export const createServer = async (): Promise<Application> => {
     typeDefs,
     resolvers,
     context: ({ req }) => {
-      if (CONFIG.IS_PROD && !verifyToken(req)) throw Error('Unauthorized');
+      if (CONFIG.IS_PROD && !verifyToken(req, false))
+        throw Error('Unauthorized');
     },
     plugins: [
       CONFIG.IS_PROD

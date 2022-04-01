@@ -8,7 +8,10 @@ export interface AuthRequest extends Request {
   signer: string;
 }
 
-export const verifyToken = (req: Request): null | string => {
+export const verifyToken = (
+  req: Request,
+  checkSignature = true
+): null | string => {
   const { authorization } = req.headers;
   const token = authorization && authorization.split(' ')[1];
 
@@ -18,11 +21,14 @@ export const verifyToken = (req: Request): null | string => {
 
   try {
     const signature = verify(token, CONFIG.JWT_SECRET);
-    const address = utils.verifyMessage(
-      'Welcome to PoignART!',
-      signature.toString()
-    );
-    return address.toLowerCase();
+    if (checkSignature) {
+      const address = utils.verifyMessage(
+        'Welcome to PoignART!',
+        signature.toString()
+      );
+      return address.toLowerCase();
+    }
+    return constants.AddressZero;
   } catch (error) {
     console.error('error verify token:', error);
     return null;
