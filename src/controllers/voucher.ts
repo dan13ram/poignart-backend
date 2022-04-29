@@ -130,7 +130,12 @@ export const createVoucher = async (
   artist.createdVouchers.push(voucher._id);
   artist.save();
 
-  await tweetMessage(getNewVoucherMessage(voucher.tokenID.toString()));
+  await tweetMessage(
+    getNewVoucherMessage(
+      voucher.tokenID.toString(),
+      utils.formatEther(voucher.minPrice)
+    )
+  );
   return voucher;
 };
 
@@ -168,7 +173,12 @@ export const redeemVoucher = async (
   voucher.signature = '0x';
   voucher.save();
 
-  await tweetMessage(getNewMintMessage(voucher.tokenID.toString()));
+  await tweetMessage(
+    getNewMintMessage(
+      voucher.tokenID.toString(),
+      utils.formatEther(voucher.minPrice)
+    )
+  );
   return voucher;
 };
 

@@ -10,16 +10,18 @@ const CLIENT = new TwitterApi({
 const { FRONTEND_URL } = process.env;
 
 export const getNewVoucherMessage = (
-  voucherId: string
-) => `Check out this new art donated to Ukraine on @PoignARTnft  
+  voucherId: string,
+  price: string
+) => `Check out this new art donated to Ukraine on @PoignARTnft
 
-Buy this piece for xxx ETH — 100% of proceeds will be donated to Ukraine!  
+Buy this piece for ${price} ETH — 100% of proceeds will be donated to Ukraine!
 
 #Unchain_Ukraine #StandWithUkraine ${FRONTEND_URL}/voucher/${voucherId}`;
 
 export const getNewMintMessage = (
-  voucherId: string
-) => `New art just sold on @PoignARTnft for xxx ETH
+  voucherId: string,
+  price: string
+) => `New art just sold on @PoignARTnft for ${price} ETH
 
 100% of proceeds are donated to Ukraine!
 
