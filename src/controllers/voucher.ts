@@ -15,6 +15,11 @@ import {
 } from '@/utils/contract';
 import { getTypedDataOptions } from '@/utils/helpers';
 import { getSnapshot } from '@/utils/snapshot';
+import {
+  getNewMintMessage,
+  getNewVoucherMessage,
+  tweetMessage
+} from '@/utils/twitter';
 import { VoucherInterface } from '@/utils/types';
 
 export const getNextTokenID = async () => {
@@ -124,6 +129,13 @@ export const createVoucher = async (
   const voucher: VoucherDocument = await VoucherModel.create(record);
   artist.createdVouchers.push(voucher._id);
   artist.save();
+
+  await tweetMessage(
+    getNewVoucherMessage(
+      voucher.tokenID.toString(),
+      utils.formatEther(voucher.minPrice)
+    )
+  );
   return voucher;
 };
 
@@ -161,6 +173,12 @@ export const redeemVoucher = async (
   voucher.signature = '0x';
   voucher.save();
 
+  await tweetMessage(
+    getNewMintMessage(
+      voucher.tokenID.toString(),
+      utils.formatEther(voucher.minPrice)
+    )
+  );
   return voucher;
 };
 
