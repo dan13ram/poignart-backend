@@ -27,4 +27,10 @@ export const getNewMintMessage = (
 
 #Unchain_Ukraine #StandWithUkraine ${FRONTEND_URL}/voucher/${voucherId}`;
 
-export const tweetMessage = (body: string) => CLIENT.readWrite.v2.tweet(body);
+export const tweetMessage = async (body: string) => {
+  try {
+    await CLIENT.readWrite.v2.tweet(body);
+  } catch (error) {
+    console.error('Error tweeting message:', error);
+  }
+};
